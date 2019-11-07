@@ -28,6 +28,8 @@ namespace VRSculpting.Tools {
 			float inv = state.drawingInverted ? -1f : 1f;
 			for (int i = 0; i < deformer.MaskCount; ++i)
 				deformation[i] = amp * inv * avgNormal;
+
+			deformer.ApplyDeformation();
 		}
 	}
 }

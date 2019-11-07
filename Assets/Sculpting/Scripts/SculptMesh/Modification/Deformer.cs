@@ -14,9 +14,12 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		public Deformer(SculptMesh mesh) {
 			this.mesh = mesh;
-			Mask = new int[mesh.Points.Length];
-			Weights = new float[mesh.Points.Length];
-			Deformation = new Vector3[mesh.Points.Length];
+
+			int count = mesh.Points.Length;
+
+			Mask = new int[count];
+			Weights = new float[count];
+			Deformation = new Vector3[count];
 			MaskCount = 0;
 		}
 
@@ -37,6 +40,11 @@ namespace VRSculpting.SculptMesh.Modification {
 		public void Unmask() {
 			MaskCount = 0;
 		}
+
+		public void ApplyDeformation() {
+			mesh.ApplyDeformation(this);
+		}
+
 	}
 
 }

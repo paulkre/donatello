@@ -35,6 +35,8 @@ namespace VRSculpting.Tools {
 
 				deformation[i] = strength * state.strength * force;
 			}
+
+			deformer.ApplyDeformation();
 		}
 
 	}

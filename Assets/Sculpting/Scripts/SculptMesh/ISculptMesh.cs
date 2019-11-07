@@ -18,7 +18,7 @@ namespace VRSculpting.SculptMesh {
 
 		Deformer Deformer { get; }
 
-		void ApplyDeformation();
+		void HandleDeformation();
 
 		void UpdateMeshData();
 

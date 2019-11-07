@@ -53,7 +53,7 @@ namespace Tests {
 					deformation[i] = offset;
 			}, "Create deform field");
 
-			timer.PrintTime(() => sculptMesh.ApplyDeformation(), "Apply deform field");
+			timer.PrintTime(() => sculptMesh.HandleDeformation(), "Apply deform field");
 
 			timer.PrintTime(() => sculptMesh.UpdateMeshData(), "Update mesh data");
 

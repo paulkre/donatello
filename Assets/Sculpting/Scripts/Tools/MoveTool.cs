@@ -35,6 +35,8 @@ namespace VRSculpting.Tools {
 				deformation[i] = delta;
 
 			prevPosition = state.position;
+
+			deformer.ApplyDeformation();
 		}
 	}
 }

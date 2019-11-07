@@ -31,6 +31,7 @@ namespace VRSculpting {
 
 			if (sculptors != null)
 				foreach (var sculptor in sculptors) sculptor.Init(sculptMesh);
+
 		}
 
 		private void Update() {
@@ -39,7 +40,7 @@ namespace VRSculpting {
 			foreach (var s in sculptors)
 				s.Sculpt();
 
-			sculptMesh.ApplyDeformation();
+			sculptMesh.HandleDeformation();
 			sculptMesh.UpdateMeshData();
 		}
 	}

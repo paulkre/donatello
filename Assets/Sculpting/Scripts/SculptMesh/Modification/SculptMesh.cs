@@ -20,6 +20,12 @@ namespace VRSculpting.SculptMesh.Modification {
 		private SpatialContainer spatialContainer;
 
 		public Deformer Deformer { get; private set; }
+		
+		private Vector3[] deformation;
+		private bool[] deformationMask;
+
+		private bool hasDeformation;
+		private bool needsUpdate;
 
 		public SculptMesh(MeshWrapperBehaviour wrapper, Mesh mesh) {
 			this.mesh = mesh;
@@ -37,6 +43,9 @@ namespace VRSculpting.SculptMesh.Modification {
 
 			Deformer = new Deformer(this);
 
+			deformation = new Vector3[Points.Length];
+			deformationMask = new bool[Points.Length];
+
 			PrintMeshInfo();
 		}
 
@@ -51,33 +60,65 @@ namespace VRSculpting.SculptMesh.Modification {
 		public int Select(Vector3 center, float radius, int[] selection) {
 			return spatialContainer.Select(center, radius, selection);
 		}
+		
+		public void HandleDeformation() {
+			if (!hasDeformation) return;
 
-		// Applies all saved deformation fields to the mesh.
-		public void ApplyDeformation() {
-			int[] mask = Deformer.Mask;
-			float[] weights = Deformer.Weights;
-			Vector3[] deformation = Deformer.Deformation;
+			ApplyDeformation();
+			UpdateNormals();
 
-			for (int i = 0; i < Deformer.MaskCount; ++i)
-				Points[mask[i]] += weights[i] * deformation[i];
+			needsUpdate = true;
 
-			spatialContainer.UpdatePoints(mask, Deformer.MaskCount);
-			UpdateNormals(mask, Deformer.MaskCount);
+			ResetDeformation();
+		}
+
+		public void ApplyDeformation(Deformer deformer) {
+			int[] ids = deformer.Mask;
+			float[] weights = deformer.Weights;
+			Vector3[] deformation = deformer.Deformation;
+
+			for (int i = 0; i < deformer.MaskCount; ++i) {
+				int id = ids[i];
+				this.deformation[id] += weights[i] * deformation[i];
+				deformationMask[id] = true;
+			}
+
+			hasDeformation = true;
 		}
 
 		// Synchronizes the half-edge data with the Unity mesh data
 		public void UpdateMeshData() {
+			if (!needsUpdate) return;
+
 			mesh.vertices = Points;
 			mesh.triangles = Ids;
 			mesh.normals = Normals;
+
+			needsUpdate = false;
 		}
 
-		private void UpdateNormals(int[] mask, int length) {
-			var verts = Topology.Vertices;
-			for (int i = 0; i < length; i++) {
-				int id = mask[i];
-				Normals[id] = Topology.GetNormal(id);
+		private void ApplyDeformation() {
+			for (int i = 0; i < deformation.Length; ++i) {
+				if (!deformationMask[i]) continue;
+				Points[i] += deformation[i];
 			}
+		}
+
+		private void UpdateNormals() {
+			for (int i = 0; i < deformation.Length; ++i) {
+				if (!deformationMask[i]) continue;
+				Normals[i] = Topology.GetNormal(i);
+			}
+		}
+
+		private void ResetDeformation() {
+			for (int i = 0; i < deformation.Length; ++i) {
+				if (!deformationMask[i]) continue;
+				deformationMask[i] = false;
+				deformation[i] = Vector3.zero;
+			}
+
+			hasDeformation = false;
 		}
 
 		private void PrintMeshInfo() {
