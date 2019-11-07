@@ -49,14 +49,6 @@ namespace VRSculpting.SculptMesh.Modification {
 			PrintMeshInfo();
 		}
 
-		public Vector3 WorldToLocal(Vector3 point) {
-			return Wrapper.MeshTransform.InverseTransformPoint(point);
-		}
-
-		public float WorldToLocal(float scalar) {
-			return scalar / Wrapper.transform.localScale.x;
-		}
-
 		public int Select(Vector3 center, float radius, int[] selection) {
 			return spatialContainer.Select(center, radius, selection);
 		}

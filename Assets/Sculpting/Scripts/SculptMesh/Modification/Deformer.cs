@@ -24,8 +24,8 @@ namespace VRSculpting.SculptMesh.Modification {
 		}
 
 		public void UpdateMask(Vector3 center, float radius, float weightStrength = 2f) {
-			center = mesh.WorldToLocal(center);
-			radius = mesh.WorldToLocal(radius);
+			center = mesh.Wrapper.WorldToLocal(center);
+			radius = mesh.Wrapper.WorldToLocal(radius);
 
 			MaskCount = mesh.Select(center, radius, Mask);
 
