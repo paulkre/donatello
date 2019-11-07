@@ -9,7 +9,7 @@ namespace VRSculpting.SculptMesh {
 		[SerializeField]
 		private SculptMeshBehaviour sculptMeshReference;
 
-		public ISculptMesh SculptMesh { get; private set; }
+		public Modification.SculptMesh SculptMesh { get; private set; }
 
 		public Material Material { get { return sculptMeshReference.Material; } }
 

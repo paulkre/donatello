@@ -20,7 +20,7 @@ namespace VRSculpting {
 		[SerializeField]
 		private MeshWrapperBehaviour meshWrapperPrefab;
 
-		private ISculptMesh sculptMesh;
+		private SculptMesh.Modification.SculptMesh sculptMesh;
 
 		private void Awake() {
 			if (meshWrapperPrefab == null) return;

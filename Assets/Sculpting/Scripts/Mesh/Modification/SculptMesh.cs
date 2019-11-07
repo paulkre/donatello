@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace VRSculpting.SculptMesh.Modification {
 	using Topology;
 
-	public class SculptMesh : ISculptMesh {
+	public class SculptMesh {
 
 		protected Mesh mesh;
 		public MeshWrapperBehaviour Wrapper { get; private set; }

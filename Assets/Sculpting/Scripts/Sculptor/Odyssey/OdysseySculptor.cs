@@ -2,7 +2,6 @@
 using UnityEngine.XR;
 
 namespace VRSculpting.Sculptor.Odyssey {
-	using SculptMesh;
 
 	public class OdysseySculptor : SculptorBehaviour {
 
@@ -20,7 +19,7 @@ namespace VRSculpting.Sculptor.Odyssey {
 		private ToolInputManager toolInputManager;
 		private ParameterInputManager parameterInputManager;
 
-		public override void Init(ISculptMesh mesh) {
+		public override void Init(SculptMesh.Modification.SculptMesh mesh) {
 			base.Init(mesh);
 
 			transformInputManager = new TransformInputManager(MeshWrapper);

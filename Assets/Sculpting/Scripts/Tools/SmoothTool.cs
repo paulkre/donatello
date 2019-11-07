@@ -2,7 +2,6 @@
 using UnityEngine;
 
 namespace VRSculpting.Tools {
-	using SculptMesh;
 	using SculptMesh.Modification;
 	using Sculptor;
 	using Settings;
@@ -12,7 +11,7 @@ namespace VRSculpting.Tools {
 		private static float strength = .05f;
 		
 		public SmoothTool(
-			ISculptMesh mesh,
+			SculptMesh mesh,
 			Deformer deformer,
 			Menu menu
 		) : base(ToolType.Smooth, mesh, deformer, menu) { }

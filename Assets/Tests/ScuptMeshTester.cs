@@ -10,7 +10,7 @@ namespace Tests {
 
 	public class ScuptMeshTester {
 		
-		private ISculptMesh sculptMesh;
+		private SculptMesh sculptMesh;
 
 		[UnityTest, Order(0)]
 		public IEnumerator BuildMesh() {

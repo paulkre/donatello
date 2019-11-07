@@ -24,7 +24,7 @@ namespace VRSculpting.Sculptor {
 
 		private Deformer deformer;
 
-		public virtual void Init(ISculptMesh sculptMesh) {
+		public virtual void Init(SculptMesh sculptMesh) {
 			MeshWrapper = sculptMesh.Wrapper;
 
 			Menu = new Menu(mainColl, ToolType.Standard);
