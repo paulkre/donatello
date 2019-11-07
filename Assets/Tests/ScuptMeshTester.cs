@@ -21,7 +21,7 @@ namespace Tests {
 			timer.PrintTime(() => mesh = IcoSphereCreator.Create(7, .5f), "Create mesh");
 
 			var wrapper = new GameObject().AddComponent<MeshWrapperBehaviour>();
-			timer.PrintTime(() => sculptMesh = new StaticMesh(wrapper, mesh), "Parse mesh");
+			timer.PrintTime(() => sculptMesh = new SculptMesh(wrapper, mesh), "Parse mesh");
 
 			timer.PrintTotalTime();
 			timer.SaveCsv();

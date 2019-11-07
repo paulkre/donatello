@@ -4,7 +4,7 @@ using UnityEngine;
 namespace VRSculpting.SculptMesh.Modification {
 	using Topology;
 
-	public class StaticMesh : ISculptMesh {
+	public class SculptMesh : ISculptMesh {
 
 		protected Mesh mesh;
 		public MeshWrapperBehaviour Wrapper { get; private set; }
@@ -21,7 +21,7 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		public Deformer Deformer { get; private set; }
 
-		public StaticMesh(MeshWrapperBehaviour wrapper, Mesh mesh) {
+		public SculptMesh(MeshWrapperBehaviour wrapper, Mesh mesh) {
 			this.mesh = mesh;
 			Wrapper = wrapper;
 

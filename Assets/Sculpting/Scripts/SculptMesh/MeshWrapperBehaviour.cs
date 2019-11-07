@@ -20,7 +20,7 @@ namespace VRSculpting.SculptMesh {
 
 			var mesh = IcoSphereCreator.Create(subdivisionLevel, radius);
 
-			SculptMesh = new Modification.StaticMesh(this, mesh);
+			SculptMesh = new Modification.SculptMesh(this, mesh);
 			sculptMeshReference.Mesh = SculptMesh.Mesh;
 
 			initialized = true;
