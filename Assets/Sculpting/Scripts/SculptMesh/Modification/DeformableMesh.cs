@@ -23,7 +23,10 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		private bool deformationThreadIsActive;
 
+		private bool isAddingDeformation;
+		private bool isApplyingDeformation;
 		private bool isReadingDeformation;
+
 		private Vector3[] deformationCopy;
 		private bool[] deformationMaskCopy;
 
@@ -50,11 +53,15 @@ namespace VRSculpting.SculptMesh.Modification {
 		}
 
 		public int Select(Vector3 center, float radius, int[] selection) {
+			while (isApplyingDeformation) { }
+
 			return spatialContainer.Select(center, radius, selection);
 		}
 
 		public void ApplyDeformation(Deformer deformer) {
 			while (isReadingDeformation) { }
+
+			isAddingDeformation = true;
 
 			int[] ids = deformer.Mask;
 			float[] weights = deformer.Weights;
@@ -67,6 +74,8 @@ namespace VRSculpting.SculptMesh.Modification {
 			}
 
 			hasDeformation = true;
+
+			isAddingDeformation = false;
 		}
 
 		private void RunDeformationHandling() {
@@ -76,11 +85,21 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		private void HandleDeformation() {
 			if (!hasDeformation) return;
-			
-			ReadDeformation();
+
+			while (isAddingDeformation) { }
+
+			isApplyingDeformation = true;
+
+			isReadingDeformation = true;
+			CopyDeformation();
+			ResetDeformation();
+			isReadingDeformation = false;
 
 			ApplyDeformation();
 			spatialContainer.UpdatePoints(deformationMaskCopy);
+
+			isApplyingDeformation = false;
+
 			UpdateNormals();
 
 			needsUpdate = true;
@@ -102,12 +121,12 @@ namespace VRSculpting.SculptMesh.Modification {
 			}
 		}
 
-		private void ReadDeformation() {
-			isReadingDeformation = true;
-
+		private void CopyDeformation() {
 			Array.Copy(deformation, deformationCopy, deformation.Length);
 			Array.Copy(deformationMask, deformationMaskCopy, deformation.Length);
+		}
 
+		private void ResetDeformation() {
 			for (int i = 0; i < deformation.Length; ++i) {
 				if (!deformationMask[i]) continue;
 				deformationMask[i] = false;
@@ -115,8 +134,6 @@ namespace VRSculpting.SculptMesh.Modification {
 			}
 
 			hasDeformation = false;
-
-			isReadingDeformation = false;
 		}
 
 	}
