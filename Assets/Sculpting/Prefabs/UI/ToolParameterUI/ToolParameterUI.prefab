@@ -111,5 +111,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adb5cd09acffa0d4b8a0dbe90cea532c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parameterPanelPrefab: {fileID: 6238098565857245619, guid: 2744ab8228f7f9f4ea59821c32d111ef,
+  parameterPanelPrefab: {fileID: 6238098565857245619, guid: 3b51262e6ab75ba4b828c9e6b1976144,
     type: 3}
