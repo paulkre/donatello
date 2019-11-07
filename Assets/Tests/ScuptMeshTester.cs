@@ -10,7 +10,7 @@ namespace Tests {
 
 	public class ScuptMeshTester {
 		
-		private ISculptMesh sculptMesh;
+		private SculptMesh sculptMesh;
 
 		[UnityTest, Order(0)]
 		public IEnumerator BuildMesh() {
@@ -21,7 +21,7 @@ namespace Tests {
 			timer.PrintTime(() => mesh = IcoSphereCreator.Create(7, .5f), "Create mesh");
 
 			var wrapper = new GameObject().AddComponent<MeshWrapperBehaviour>();
-			timer.PrintTime(() => sculptMesh = new StaticMesh(wrapper, mesh), "Parse mesh");
+			timer.PrintTime(() => sculptMesh = new SculptMesh(wrapper, mesh), "Parse mesh");
 
 			timer.PrintTotalTime();
 			timer.SaveCsv();
@@ -35,7 +35,7 @@ namespace Tests {
 		public IEnumerator ModifyMesh() {
 			var timer = new Timer("modify-mesh");
 
-			var deformer = sculptMesh.Deformer;
+			var deformer = new Deformer(sculptMesh);
 
 			timer.PrintTime(() => {
 				deformer.UpdateMask(Vector3.up * .5f, .25f, 2f);
@@ -52,8 +52,6 @@ namespace Tests {
 				for (int i = 0; i < deformer.MaskCount; ++i)
 					deformation[i] = offset;
 			}, "Create deform field");
-
-			timer.PrintTime(() => sculptMesh.ApplyDeformation(), "Apply deform field");
 
 			timer.PrintTime(() => sculptMesh.UpdateMeshData(), "Update mesh data");
 

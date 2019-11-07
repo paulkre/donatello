@@ -18,6 +18,9 @@ namespace VRSculpting.SculptMesh.Modification {
 		IndexCollection[][][] collections;
 		IndexNode[] indexNodes;
 
+		bool isUpdating;
+		bool isSelecting;
+
 		public SpatialContainer(Vector3[] points, float size, int subdivisions) {
 			this.points = points;
 			this.size = size;
@@ -32,6 +35,10 @@ namespace VRSculpting.SculptMesh.Modification {
 		}
 
 		public int Select(Vector3 center, float radius, int[] selection) {
+			while (isUpdating) { }
+
+			isSelecting = true;
+
 			var start = PointToIndex(
 				center.x - radius,
 				center.y - radius,
@@ -62,19 +69,31 @@ namespace VRSculpting.SculptMesh.Modification {
 						}
 					}
 
+			isSelecting = false;
+
 			return count;
 		}
 
-		public void UpdatePoints(int[] indices, int length) {
-			for (int i = 0; i < length; i++) {
-				int id = indices[i];
-				var node = indexNodes[id];
-				Vector3Int p = PointToIndex(points[id]);
-				var coll = collections[p.x][p.y][p.z];
-				if (node.List != coll) {
-					node.List.Remove(node);
-					coll.AddLast(node);
-				}
+		public void UpdatePoints(bool[] mask) {
+			while (isSelecting) { }
+
+			isUpdating = true;
+
+			for (int i = 0; i < mask.Length; i++) {
+				if (!mask[i]) continue;
+				UpdatePoint(i);
+			}
+
+			isUpdating = false;
+		}
+
+		private void UpdatePoint(int id) {
+			var node = indexNodes[id];
+			Vector3Int p = PointToIndex(points[id]);
+			var coll = collections[p.x][p.y][p.z];
+			if (node.List != coll) {
+				node.List.Remove(node);
+				coll.AddLast(node);
 			}
 		}
 

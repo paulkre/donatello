@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace VRSculpting.Tools {
-	using SculptMesh;
+	using SculptMesh.Modification;
 	using Sculptor;
 	using Settings;
 
@@ -9,10 +9,14 @@ namespace VRSculpting.Tools {
 
 		private static float strength = .001f;
 
-		public StandardTool(ISculptMesh mesh, Menu menu) : base(ToolType.Standard, mesh, menu) { }
+		public StandardTool(
+			SculptMesh mesh,
+			Deformer deformer,
+			Menu menu
+		) : base(ToolType.Standard, mesh, deformer, menu) { }
 
 		public override void Use(SculptState state) {
-			var deformer = SculptMesh.Deformer;
+			var deformer = Deformer;
 
 			deformer.UpdateMask(state.position, Size / 2, Hardness);
 
@@ -28,6 +32,8 @@ namespace VRSculpting.Tools {
 			float inv = state.drawingInverted ? -1f : 1f;
 			for (int i = 0; i < deformer.MaskCount; ++i)
 				deformation[i] = amp * inv * avgNormal;
+
+			deformer.ApplyDeformation();
 		}
 	}
 }

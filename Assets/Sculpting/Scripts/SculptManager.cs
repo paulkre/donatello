@@ -20,7 +20,9 @@ namespace VRSculpting {
 		[SerializeField]
 		private MeshWrapperBehaviour meshWrapperPrefab;
 
-		private ISculptMesh sculptMesh;
+		private SculptMesh.Modification.SculptMesh sculptMesh;
+
+		public static int FrameCount { get; private set; }
 
 		private void Awake() {
 			if (meshWrapperPrefab == null) return;
@@ -31,15 +33,17 @@ namespace VRSculpting {
 
 			if (sculptors != null)
 				foreach (var sculptor in sculptors) sculptor.Init(sculptMesh);
+
 		}
 
 		private void Update() {
+			FrameCount = Time.frameCount;
+
 			if (sculptors == null) return;
 
 			foreach (var s in sculptors)
 				s.Sculpt();
-
-			sculptMesh.ApplyDeformation();
+			
 			sculptMesh.UpdateMeshData();
 		}
 	}

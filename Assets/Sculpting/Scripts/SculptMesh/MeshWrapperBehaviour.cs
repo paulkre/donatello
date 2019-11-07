@@ -9,7 +9,7 @@ namespace VRSculpting.SculptMesh {
 		[SerializeField]
 		private SculptMeshBehaviour sculptMeshReference;
 
-		public ISculptMesh SculptMesh { get; private set; }
+		public Modification.SculptMesh SculptMesh { get; private set; }
 
 		public Material Material { get { return sculptMeshReference.Material; } }
 
@@ -18,7 +18,9 @@ namespace VRSculpting.SculptMesh {
 		public void Init(int subdivisionLevel = 6, float radius = .5f) {
 			if (sculptMeshReference == null || initialized) return;
 
-			SculptMesh = new Modification.MultiMesh(this, subdivisionLevel, radius);
+			var mesh = IcoSphereCreator.Create(subdivisionLevel, radius);
+
+			SculptMesh = new Modification.SculptMesh(this, mesh);
 			sculptMeshReference.Mesh = SculptMesh.Mesh;
 
 			initialized = true;
@@ -28,6 +30,14 @@ namespace VRSculpting.SculptMesh {
 			var tmp = MeshTransform.rotation;
 			transform.rotation = Quaternion.Euler(Vector3.zero);
 			sculptMeshReference.transform.rotation = tmp;
+		}
+
+		public Vector3 WorldToLocal(Vector3 point) {
+			return MeshTransform.InverseTransformPoint(point);
+		}
+
+		public float WorldToLocal(float scalar) {
+			return scalar / transform.localScale.x;
 		}
 
 	}

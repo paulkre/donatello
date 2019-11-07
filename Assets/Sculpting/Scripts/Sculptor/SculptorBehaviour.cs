@@ -4,6 +4,7 @@ using UnityEngine;
 namespace VRSculpting.Sculptor {
 	using Tools;
 	using SculptMesh;
+	using SculptMesh.Modification;
 	using Settings;
 
 	public abstract class SculptorBehaviour : MonoBehaviour {
@@ -21,20 +22,20 @@ namespace VRSculpting.Sculptor {
 
 		protected MeshWrapperBehaviour MeshWrapper { get; private set; }
 
-		public virtual void Init(ISculptMesh sculptMesh) {
+		private Deformer deformer;
+
+		public virtual void Init(SculptMesh sculptMesh) {
 			MeshWrapper = sculptMesh.Wrapper;
 
 			Menu = new Menu(mainColl, ToolType.Standard);
 
-			mainColl = new ToolCollection(sculptMesh, Menu);
+			deformer = new Deformer(sculptMesh);
 
-			Menu.OnToolChange += HandleToolChange;
+			mainColl = new ToolCollection(sculptMesh, deformer, Menu);
+
+			Menu.OnToolChange += (ToolType tool) => deformer.Unmask();
 
 			uiComponents.ForEach(ui => ui.Init(Menu));
-		}
-
-		private void HandleToolChange(ToolType tool) {
-			MeshWrapper.SculptMesh.Deformer.Unmask();
 		}
 
 		public void Sculpt() {
@@ -48,7 +49,7 @@ namespace VRSculpting.Sculptor {
 			if (state.drawing)
 				mainColl[Menu.CurrentTool].Use(state);
 			else if (state.drawingUp)
-				MeshWrapper.SculptMesh.Deformer.Unmask();
+				deformer.Unmask();
 		}
 
 		protected abstract SculptState GetState(SculptState prev);
