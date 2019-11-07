@@ -65,16 +65,20 @@ namespace VRSculpting.SculptMesh.Modification {
 			return count;
 		}
 
-		public void UpdatePoints(int[] indices, int length) {
-			for (int i = 0; i < length; i++) {
-				int id = indices[i];
-				var node = indexNodes[id];
-				Vector3Int p = PointToIndex(points[id]);
-				var coll = collections[p.x][p.y][p.z];
-				if (node.List != coll) {
-					node.List.Remove(node);
-					coll.AddLast(node);
-				}
+		public void UpdatePoints(bool[] mask) {
+			for (int i = 0; i < mask.Length; i++) {
+				if (!mask[i]) continue;
+				UpdatePoint(i);
+			}
+		}
+
+		private void UpdatePoint(int id) {
+			var node = indexNodes[id];
+			Vector3Int p = PointToIndex(points[id]);
+			var coll = collections[p.x][p.y][p.z];
+			if (node.List != coll) {
+				node.List.Remove(node);
+				coll.AddLast(node);
 			}
 		}
 

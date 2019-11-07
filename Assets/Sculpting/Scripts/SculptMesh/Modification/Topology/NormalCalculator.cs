@@ -10,6 +10,8 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 		private int[] lastTriangleUpdateFrame;
 		private float[][] triangleNormalCache;
 
+		public int executionCount;
+
 		public NormalCalculator(Vector3[] points, int[] triangles) {
 			this.points = points;
 			this.triangles = triangles;
@@ -23,6 +25,8 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 				lastTriangleUpdateFrame[i] = -1;
 				triangleNormalCache[i] = new float[3];
 			}
+
+			executionCount = -1;
 		}
 
 		public Vector3 GetNormal(Vertex vertex) {
@@ -47,9 +51,7 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 		}
 
 		private float[] GetTriangleNormal(int faceId) {
-			int frameCount = Time.frameCount;
-
-			if (lastTriangleUpdateFrame[faceId] != frameCount) {
+			if (lastTriangleUpdateFrame[faceId] != executionCount) {
 				int id = 3 * faceId;
 				var p0 = points[triangles[id]];
 				var p1 = points[triangles[id + 1]];
@@ -74,7 +76,7 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 				normal[1] = cy / mag;
 				normal[2] = cz / mag;
 
-				lastTriangleUpdateFrame[faceId] = frameCount;
+				lastTriangleUpdateFrame[faceId] = executionCount;
 			}
 
 			return triangleNormalCache[faceId];

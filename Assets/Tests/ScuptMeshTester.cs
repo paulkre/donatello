@@ -53,8 +53,6 @@ namespace Tests {
 					deformation[i] = offset;
 			}, "Create deform field");
 
-			timer.PrintTime(() => sculptMesh.HandleDeformation(), "Apply deform field");
-
 			timer.PrintTime(() => sculptMesh.UpdateMeshData(), "Update mesh data");
 
 			Debug.Log($"{deformer.MaskCount} vertices modified out of {sculptMesh.Points.Length}.\n");

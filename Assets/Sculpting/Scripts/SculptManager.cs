@@ -22,6 +22,8 @@ namespace VRSculpting {
 
 		private SculptMesh.Modification.SculptMesh sculptMesh;
 
+		public static int FrameCount { get; private set; }
+
 		private void Awake() {
 			if (meshWrapperPrefab == null) return;
 
@@ -35,12 +37,13 @@ namespace VRSculpting {
 		}
 
 		private void Update() {
+			FrameCount = Time.frameCount;
+
 			if (sculptors == null) return;
 
 			foreach (var s in sculptors)
 				s.Sculpt();
-
-			sculptMesh.HandleDeformation();
+			
 			sculptMesh.UpdateMeshData();
 		}
 	}

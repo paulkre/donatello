@@ -9,8 +9,6 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 
 		public Edge[] Edges { get; private set; }
 
-		private NormalCalculator normalCalculator;
-
 		public TopologyManager(Vector3[] points, int[] triangles) {
 			Vertices = new Vertex[points.Length];
 
@@ -39,12 +37,6 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 			}
 
 			Edges = edges.ToArray();
-
-			normalCalculator = new NormalCalculator(points, triangles);
-		}
-
-		public Vector3 GetNormal(int id) {
-			return normalCalculator.GetNormal(Vertices[id]);
 		}
 
 	}
