@@ -18,7 +18,9 @@ namespace VRSculpting.SculptMesh {
 		public void Init(int subdivisionLevel = 6, float radius = .5f) {
 			if (sculptMeshReference == null || initialized) return;
 
-			SculptMesh = new Modification.MultiMesh(this, subdivisionLevel, radius);
+			var mesh = IcoSphereCreator.Create(subdivisionLevel, radius);
+
+			SculptMesh = new Modification.StaticMesh(this, mesh);
 			sculptMeshReference.Mesh = SculptMesh.Mesh;
 
 			initialized = true;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace VRSculpting.SculptMesh.Modification {
+namespace VRSculpting.SculptMesh {
 	public static class IcoSphereCreator {
 
 		public static Mesh Create(int subdivisions = 3, float radius = .5f) {
