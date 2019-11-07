@@ -18,8 +18,6 @@ namespace VRSculpting.SculptMesh.Modification {
 		public TopologyManager Topology { get; private set; }
 
 		private SpatialContainer spatialContainer;
-
-		public Deformer Deformer { get; private set; }
 		
 		private Vector3[] deformation;
 		private bool[] deformationMask;
@@ -40,8 +38,6 @@ namespace VRSculpting.SculptMesh.Modification {
 			Topology = new TopologyManager(Points, Ids);
 
 			spatialContainer = new SpatialContainer(Points, 3, 16);
-
-			Deformer = new Deformer(this);
 
 			deformation = new Vector3[Points.Length];
 			deformationMask = new bool[Points.Length];

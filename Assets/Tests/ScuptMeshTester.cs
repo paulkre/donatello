@@ -35,7 +35,7 @@ namespace Tests {
 		public IEnumerator ModifyMesh() {
 			var timer = new Timer("modify-mesh");
 
-			var deformer = sculptMesh.Deformer;
+			var deformer = new Deformer(sculptMesh);
 
 			timer.PrintTime(() => {
 				deformer.UpdateMask(Vector3.up * .5f, .25f, 2f);

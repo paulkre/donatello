@@ -16,7 +16,9 @@ namespace VRSculpting.SculptMesh {
 
 		MeshWrapperBehaviour Wrapper { get; }
 
-		Deformer Deformer { get; }
+		int Select(Vector3 center, float radius, int[] selection);
+
+		void ApplyDeformation(Deformer deformer);
 
 		void HandleDeformation();
 

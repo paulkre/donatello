@@ -1,5 +1,6 @@
 ﻿namespace VRSculpting.Tools {
 	using SculptMesh;
+	using SculptMesh.Modification;
 	using Settings;
 	using Sculptor;
 
@@ -9,12 +10,15 @@
 
 		protected ISculptMesh SculptMesh { get; private set; }
 
+		protected Deformer Deformer { get; private set; }
+
 		private Menu menu;
 
-		public Tool(ToolType type, ISculptMesh sculptMesh, Menu menu) {
+		public Tool(ToolType type, ISculptMesh sculptMesh, Deformer deformer,  Menu menu) {
 			this.menu = menu;
 			Type = type;
 			SculptMesh = sculptMesh;
+			Deformer = deformer;
 		}
 
 		protected float Size { get { return menu.ToolSize.Value; } }

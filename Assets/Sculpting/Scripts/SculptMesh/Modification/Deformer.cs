@@ -4,7 +4,7 @@ namespace VRSculpting.SculptMesh.Modification {
 
 	public class Deformer {
 
-		private SculptMesh mesh;
+		private ISculptMesh mesh;
 
 		public int[] Mask { get; private set; }
 		public float[] Weights { get; private set; }
@@ -12,7 +12,7 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		public int MaskCount { get; private set; }
 
-		public Deformer(SculptMesh mesh) {
+		public Deformer(ISculptMesh mesh) {
 			this.mesh = mesh;
 
 			int count = mesh.Points.Length;

@@ -2,6 +2,7 @@
 
 namespace VRSculpting.Tools {
 	using SculptMesh;
+	using SculptMesh.Modification;
 	using Sculptor;
 	using Settings;
 
@@ -9,12 +10,16 @@ namespace VRSculpting.Tools {
 
 		private Vector3 prevPosition;
 
-		public MoveTool(ISculptMesh mesh, Menu menu) : base(ToolType.Move, mesh, menu) {
+		public MoveTool(
+			ISculptMesh mesh,
+			Deformer deformer,
+			Menu menu
+		) : base(ToolType.Move, mesh, deformer, menu) {
 			prevPosition = Vector3.zero;
 		}
 
 		public override void Use(SculptState state) {
-			var deformer = SculptMesh.Deformer;
+			var deformer = Deformer;
 
 			if (state.drawingDown) {
 				deformer.UpdateMask(
