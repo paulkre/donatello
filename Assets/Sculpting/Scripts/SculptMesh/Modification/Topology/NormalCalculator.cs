@@ -4,19 +4,19 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 
 	public class NormalCalculator {
 
+		private Vertex[] vertices;
 		private Vector3[] points;
-		private int[] triangles;
+		private int[] ids;
 
 		private int[] lastTriangleUpdateFrame;
 		private float[][] triangleNormalCache;
 
-		public int executionCount;
-
-		public NormalCalculator(Vector3[] points, int[] triangles) {
+		public NormalCalculator(Vertex[] vertices, Vector3[] points, int[] ids) {
+			this.vertices = vertices;
 			this.points = points;
-			this.triangles = triangles;
+			this.ids = ids;
 
-			int triangleCount = triangles.Length / 3;
+			int triangleCount = ids.Length / 3;
 
 			lastTriangleUpdateFrame = new int[triangleCount];
 			triangleNormalCache = new float[triangleCount][];
@@ -25,11 +25,23 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 				lastTriangleUpdateFrame[i] = -1;
 				triangleNormalCache[i] = new float[3];
 			}
-
-			executionCount = -1;
 		}
 
-		public Vector3 GetNormal(Vertex vertex) {
+		public bool UpdateNormals(Vector3[] normals, bool[] mask) {
+			bool didUpdate = false;
+
+			for (int i = 0; i < mask.Length; i++) {
+				if (mask[i]) {
+					mask[i] = false;
+					normals[i] = GetNormal(vertices[i]);
+					didUpdate = true;
+				}
+			}
+
+			return didUpdate;
+		}
+
+		private Vector3 GetNormal(Vertex vertex) {
 			float x = 0f;
 			float y = 0f;
 			float z = 0f;
@@ -51,11 +63,13 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 		}
 
 		private float[] GetTriangleNormal(int faceId) {
-			if (lastTriangleUpdateFrame[faceId] != executionCount) {
+			int frameCount = SculptManager.FrameCount;
+
+			if (lastTriangleUpdateFrame[faceId] != frameCount) {
 				int id = 3 * faceId;
-				var p0 = points[triangles[id]];
-				var p1 = points[triangles[id + 1]];
-				var p2 = points[triangles[id + 2]];
+				var p0 = points[ids[id]];
+				var p1 = points[ids[id + 1]];
+				var p2 = points[ids[id + 2]];
 
 				float ax = p1.x - p0.x;
 				float ay = p1.y - p0.y;
@@ -76,7 +90,7 @@ namespace VRSculpting.SculptMesh.Modification.Topology {
 				normal[1] = cy / mag;
 				normal[2] = cz / mag;
 
-				lastTriangleUpdateFrame[faceId] = executionCount;
+				lastTriangleUpdateFrame[faceId] = frameCount;
 			}
 
 			return triangleNormalCache[faceId];

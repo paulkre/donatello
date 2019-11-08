@@ -42,7 +42,7 @@ namespace VRSculpting.SculptMesh.Modification {
 		}
 
 		public void ApplyDeformation() {
-			mesh.ApplyDeformation(this);
+			mesh.AddDeformation(this);
 		}
 
 	}

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using UnityEngine;
 
 namespace VRSculpting.SculptMesh.Modification {
@@ -12,23 +11,22 @@ namespace VRSculpting.SculptMesh.Modification {
 		public Vector3[] Normals { get; private set; }
 
 		public TopologyManager Topology { get; private set; }
-		private NormalCalculator normalCalculator;
 		private SpatialContainer spatialContainer;
 
 		private Vector3[] deformation;
 		private bool[] deformationMask;
 
+		private NormalCalculator normalCalculator;
+		private bool[] normalsToUpdateMask;
+
 		private bool hasDeformation;
-		protected bool needsUpdate;
 
-		private bool deformationThreadIsActive;
+		public bool IsAddingDeformation { get; private set; }
 
-		private bool isAddingDeformation;
-		private bool isApplyingDeformation;
-		private bool isReadingDeformation;
+		private bool running;
 
-		private Vector3[] deformationCopy;
-		private bool[] deformationMaskCopy;
+		protected bool PointsNeedUpdate { get; set; }
+		protected bool NormalsNeedUpdate { get; set; }
 
 		public DeformableMesh(Vector3[] points, int[] ids, Vector3[] normals) {
 			Points = points;
@@ -36,32 +34,36 @@ namespace VRSculpting.SculptMesh.Modification {
 			Normals = normals;
 
 			Topology = new TopologyManager(points, ids);
-			normalCalculator = new NormalCalculator(points, ids);
 			spatialContainer = new SpatialContainer(points, 3, 16);
+
+			normalCalculator = new NormalCalculator(Topology.Vertices, points, ids);
 
 			deformation = new Vector3[points.Length];
 			deformationMask = new bool[points.Length];
+			normalsToUpdateMask = new bool[points.Length];
 
-			deformationCopy = new Vector3[points.Length];
-			deformationMaskCopy = new bool[points.Length];
-
-			deformationThreadIsActive = true;
-
+			running = true;
 			new Thread(
-				new ThreadStart(RunDeformationHandling)
+				new ThreadStart(UpdateNormalsLoop)
 			).Start();
 		}
 
-		public int Select(Vector3 center, float radius, int[] selection) {
-			while (isApplyingDeformation) { }
+		private void UpdateNormalsLoop() {
+			while (running) {
+				var didUpdate = normalCalculator.UpdateNormals(
+					Normals,
+					normalsToUpdateMask
+				);
+				if (didUpdate) NormalsNeedUpdate = true;
+			}
+		}
 
+		public int Select(Vector3 center, float radius, int[] selection) {
 			return spatialContainer.Select(center, radius, selection);
 		}
 
-		public void ApplyDeformation(Deformer deformer) {
-			while (isReadingDeformation) { }
-
-			isAddingDeformation = true;
+		public void AddDeformation(Deformer deformer) {
+			IsAddingDeformation = true;
 
 			int[] ids = deformer.Mask;
 			float[] weights = deformer.Weights;
@@ -75,55 +77,32 @@ namespace VRSculpting.SculptMesh.Modification {
 
 			hasDeformation = true;
 
-			isAddingDeformation = false;
+			IsAddingDeformation = false;
 		}
 
-		private void RunDeformationHandling() {
-			while (deformationThreadIsActive)
-				HandleDeformation();
-		}
-
-		private void HandleDeformation() {
+		public void ApplyDeformation() {
 			if (!hasDeformation) return;
 
-			while (isAddingDeformation) { }
-
-			isApplyingDeformation = true;
-
-			isReadingDeformation = true;
-			CopyDeformation();
+			UpdatePoints();
+			MarkNormalsToUpdate();
+			spatialContainer.UpdatePoints(deformationMask);
 			ResetDeformation();
-			isReadingDeformation = false;
-
-			ApplyDeformation();
-			spatialContainer.UpdatePoints(deformationMaskCopy);
-
-			isApplyingDeformation = false;
-
-			UpdateNormals();
-
-			needsUpdate = true;
 		}
 
-		private void ApplyDeformation() {
+		private void MarkNormalsToUpdate() {
+			for (int i = 0; i < deformationMask.Length; i++) {
+				if (deformationMask[i])
+					normalsToUpdateMask[i] = true;
+			}
+		}
+
+		private void UpdatePoints() {
 			for (int i = 0; i < deformation.Length; ++i) {
-				if (!deformationMaskCopy[i]) continue;
-				Points[i] += deformationCopy[i];
+				if (deformationMask[i])
+					Points[i] += deformation[i];
 			}
-		}
 
-		private void UpdateNormals() {
-			normalCalculator.executionCount++;
-			var verts = Topology.Vertices;
-			for (int i = 0; i < deformationCopy.Length; ++i) {
-				if (!deformationMaskCopy[i]) continue;
-				Normals[i] = normalCalculator.GetNormal(verts[i]);
-			}
-		}
-
-		private void CopyDeformation() {
-			Array.Copy(deformation, deformationCopy, deformation.Length);
-			Array.Copy(deformationMask, deformationMaskCopy, deformation.Length);
+			PointsNeedUpdate = true;
 		}
 
 		private void ResetDeformation() {

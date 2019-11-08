@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace VRSculpting.Sculptor {
@@ -38,7 +39,7 @@ namespace VRSculpting.Sculptor {
 			uiComponents.ForEach(ui => ui.Init(Menu));
 		}
 
-		public void Sculpt() {
+		private void Update() {
 			state = GetState(state);
 
 			var mat = MeshWrapper.Material;
@@ -50,6 +51,8 @@ namespace VRSculpting.Sculptor {
 				mainColl[Menu.CurrentTool].Use(state);
 			else if (state.drawingUp)
 				deformer.Unmask();
+
+			MeshWrapper.SculptMesh.ApplyDeformation();
 		}
 
 		protected abstract SculptState GetState(SculptState prev);
