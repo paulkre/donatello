@@ -6,10 +6,10 @@ namespace VRSculpting.Sculptor.Odyssey {
 	public class OdysseySculptor : SculptorBehaviour {
 
 		[SerializeField]
-		private Transform leftController;
+		public Transform leftController;
 
 		[SerializeField]
-		private Transform rightController;
+		public Transform rightController;
 
 		private static Vector3 effectPointOffset = new Vector3(.015f, -.05f, .12f);
 

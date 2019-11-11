@@ -11,10 +11,10 @@ namespace VRSculpting.UI.ToolSelectionUI {
 		private static float optionGap = .02f;
 
 		[SerializeField]
-		private OptionBehaviour optionPrefab;
+		public OptionBehaviour optionPrefab;
 
 		[SerializeField]
-		private List<OptionProps> optionProps;
+		public List<OptionProps> optionProps;
 
 		private Transform optionRoot;
 		private OptionBehaviour[] options;

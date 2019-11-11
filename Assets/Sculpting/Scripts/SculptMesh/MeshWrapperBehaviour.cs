@@ -7,7 +7,7 @@ namespace VRSculpting.SculptMesh {
 		private bool initialized = false;
 
 		[SerializeField]
-		private SculptMeshBehaviour sculptMeshReference;
+		public SculptMeshBehaviour sculptMeshReference;
 
 		public Modification.SculptMesh SculptMesh { get; private set; }
 
