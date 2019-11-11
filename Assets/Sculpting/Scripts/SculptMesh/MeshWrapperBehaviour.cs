@@ -32,13 +32,5 @@ namespace VRSculpting.SculptMesh {
 			sculptMeshReference.transform.rotation = tmp;
 		}
 
-		public Vector3 WorldToLocal(Vector3 point) {
-			return MeshTransform.InverseTransformPoint(point);
-		}
-
-		public float WorldToLocal(float scalar) {
-			return scalar / transform.localScale.x;
-		}
-
 	}
 }
