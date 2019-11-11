@@ -7,7 +7,7 @@ namespace VRSculpting {
 	public class SculptManager : MonoBehaviour {
 
 		[SerializeField]
-		private SculptorBehaviour[] sculptors;
+		public SculptorBehaviour[] sculptors;
 
 		[Header("Mesh")]
 
@@ -18,7 +18,7 @@ namespace VRSculpting {
 		private float radius = .5f;
 
 		[SerializeField]
-		private MeshWrapperBehaviour meshWrapperPrefab;
+		public MeshWrapperBehaviour meshWrapperPrefab;
 
 		private SculptMesh.Modification.SculptMesh sculptMesh;
 

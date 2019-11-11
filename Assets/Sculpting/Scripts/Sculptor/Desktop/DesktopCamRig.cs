@@ -5,10 +5,10 @@ using UnityEngine;
 namespace VRSculpting.Sculptor.Desktop {
 	public class DesktopCamRig : MonoBehaviour {
 		[SerializeField]
-		private Camera cam;
+		public Camera cam;
 
 		[SerializeField]
-		private Transform vertPivot;
+		public Transform vertPivot;
 
 		[SerializeField]
 		private float zoomStrength = .0008f;

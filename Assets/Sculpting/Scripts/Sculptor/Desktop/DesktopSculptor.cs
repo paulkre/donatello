@@ -6,7 +6,8 @@ namespace VRSculpting.Sculptor.Desktop {
 	public class DesktopSculptor : SculptorBehaviour {
 
 		[SerializeField]
-		private DesktopCamRig camRigPrefab;
+		public DesktopCamRig camRigPrefab;
+
 		private DesktopCamRig camRig;
 
 		private static float parameterModStrength = .1f;

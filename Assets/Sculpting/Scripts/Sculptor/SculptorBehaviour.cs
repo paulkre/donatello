@@ -11,11 +11,9 @@ namespace VRSculpting.Sculptor {
 	public abstract class SculptorBehaviour : MonoBehaviour {
 
 		[SerializeField]
-		private List<UI.UI> uiComponents;
+		public List<UI.UI> uiComponents;
 
 		protected Menu Menu { get; private set; }
-
-		private static bool symmetry = true;
 
 		private ToolCollection mainColl;
 
