@@ -46,7 +46,7 @@
 			float d = distance(IN.worldPos, _BrushPos);
 			float a = d < _BrushRadius ? max(0.0, 1.0 - smoothStep(d / _BrushRadius)) : 0.0;
 			o.Albedo = _Color;
-			o.Emission = a * _SelectColor;
+			o.Emission = 0.9 * a * _SelectColor;
 			o.Metallic = 0.0;
 			o.Smoothness = _Glossiness;
 		}
