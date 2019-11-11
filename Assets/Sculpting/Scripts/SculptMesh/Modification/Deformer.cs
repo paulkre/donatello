@@ -7,7 +7,6 @@ namespace VRSculpting.SculptMesh.Modification {
 	public class Deformer {
 
 		private SculptMesh mesh;
-		private Menu menu;
 
 		public int[] Mask { get; private set; }
 		public float[] Weights { get; private set; }
@@ -15,9 +14,8 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		public int MaskCount { get; private set; }
 
-		public Deformer(SculptMesh mesh, Menu menu) {
+		public Deformer(SculptMesh mesh) {
 			this.mesh = mesh;
-			this.menu = menu;
 
 			int count = mesh.Points.Length;
 
@@ -29,8 +27,8 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		public void UpdateMask(SculptState state) {
 			Vector3 center = state.worldToLocal.MultiplyPoint(state.position);
-			float radius = (menu.ToolSize.Value * state.worldToLocal.lossyScale.x) / 2;
-			float weightStrength = menu.ToolHardness.Value;
+			float radius = (state.menuState.toolSize * state.worldToLocal.lossyScale.x) / 2;
+			float weightStrength = state.menuState.toolHardness;
 			
 			MaskCount = mesh.Select(center, radius, Mask);
 

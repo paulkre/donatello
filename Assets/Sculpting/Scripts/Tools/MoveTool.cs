@@ -11,9 +11,8 @@ namespace VRSculpting.Tools {
 
 		public MoveTool(
 			SculptMesh mesh,
-			Deformer deformer,
-			Menu menu
-		) : base(ToolType.Move, mesh, deformer, menu) {
+			Deformer deformer
+		) : base(ToolType.Move, mesh, deformer) {
 			prevPosition = Vector3.zero;
 		}
 

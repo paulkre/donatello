@@ -17,6 +17,14 @@ namespace VRSculpting.Settings {
 			selectedParameterId = 0;
 		}
 
+		public MenuState GetState() {
+			return new MenuState {
+				tool = CurrentTool,
+				toolSize = ToolSize.Value,
+				toolHardness = ToolHardness.Value
+			};
+		}
+
 		#region tool-selection
 
 		public delegate void OnToolChangeHandler(ToolType tool);

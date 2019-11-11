@@ -33,9 +33,9 @@ namespace VRSculpting.Sculptor {
 
 			Menu = new Menu(ToolType.Standard);
 
-			deformer = new Deformer(sculptMesh, Menu);
+			deformer = new Deformer(sculptMesh);
 
-			mainColl = new ToolCollection(sculptMesh, deformer, Menu);
+			mainColl = new ToolCollection(sculptMesh, deformer);
 
 			uiComponents.ForEach(ui => ui.Init(Menu));
 
@@ -50,6 +50,7 @@ namespace VRSculpting.Sculptor {
 		private void Update() {
 			currentState = GetState(currentState);
 			currentState.worldToLocal = MeshWrapper.MeshTransform.worldToLocalMatrix;
+			currentState.menuState = Menu.GetState();
 
 			var mat = MeshWrapper.Material;
 			mat.SetVector($"_BrushPos", currentState.position);
@@ -67,7 +68,7 @@ namespace VRSculpting.Sculptor {
 
 		private void Sculpt(SculptState state) {
 			if (state.drawing)
-				mainColl[Menu.CurrentTool].Use(state);
+				mainColl[state.menuState.tool].Use(state);
 			else if (state.drawingUp)
 				deformer.Unmask();
 

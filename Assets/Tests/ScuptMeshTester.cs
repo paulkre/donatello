@@ -40,7 +40,7 @@ namespace Tests {
 
 			var menu = new Menu(ToolType.Move);
 
-			var deformer = new Deformer(sculptMesh, menu);
+			var deformer = new Deformer(sculptMesh);
 
 			var state = new SculptState {
 				position = Vector3.up * .5f,

@@ -11,9 +11,8 @@ namespace VRSculpting.Tools {
 
 		public StandardTool(
 			SculptMesh mesh,
-			Deformer deformer,
-			Menu menu
-		) : base(ToolType.Standard, mesh, deformer, menu) { }
+			Deformer deformer
+		) : base(ToolType.Standard, mesh, deformer) { }
 
 		public override void Use(SculptState state) {
 			var deformer = Deformer;
