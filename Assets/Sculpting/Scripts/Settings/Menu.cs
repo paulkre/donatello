@@ -1,14 +1,12 @@
 ﻿using System;
 using UnityEngine;
-using System.Linq;
 
 namespace VRSculpting.Settings {
 	using Tools;
 
 	public class Menu {
 
-		public Menu(ToolCollection tools, ToolType initialTool) {
-			Tools = tools;
+		public Menu(ToolType initialTool) {
 			currentTool = initialTool;
 
 			Parameters = new Parameter[] {
@@ -19,9 +17,15 @@ namespace VRSculpting.Settings {
 			selectedParameterId = 0;
 		}
 
-		#region tool-selection
+		public MenuState GetState() {
+			return new MenuState {
+				tool = CurrentTool,
+				toolSize = ToolSize.Value,
+				toolHardness = ToolHardness.Value
+			};
+		}
 
-		public ToolCollection Tools { get; private set; }
+		#region tool-selection
 
 		public delegate void OnToolChangeHandler(ToolType tool);
 

@@ -4,6 +4,9 @@ using UnityEngine.TestTools;
 using UnityEngine;
 
 using VRSculpting.SculptMesh;
+using VRSculpting.Settings;
+using VRSculpting.Sculptor;
+using VRSculpting.Tools;
 using VRSculpting.SculptMesh.Modification;
 
 namespace Tests {
@@ -35,10 +38,17 @@ namespace Tests {
 		public IEnumerator ModifyMesh() {
 			var timer = new Timer("modify-mesh");
 
+			var menu = new Menu(ToolType.Move);
+
 			var deformer = new Deformer(sculptMesh);
 
+			var state = new SculptState {
+				position = Vector3.up * .5f,
+				worldToLocal = sculptMesh.Wrapper.MeshTransform.worldToLocalMatrix
+			};
+
 			timer.PrintTime(() => {
-				deformer.UpdateMask(Vector3.up * .5f, .25f, 2f);
+				deformer.UpdateMask(state);
 			}, "Select vertices");
 
 			Vector3 offset = Vector3.up * Random.value;

@@ -27,13 +27,15 @@ namespace VRSculpting.SculptMesh.Modification {
 
 		// Synchronizes the half-edge data with the Unity mesh data
 		public void UpdateMeshData() {
-			if (!needsUpdate) return;
+			if (PointsNeedUpdate) {
+				PointsNeedUpdate = false;
+				mesh.vertices = Points;
+			}
 
-			mesh.vertices = Points;
-			mesh.triangles = Ids;
-			mesh.normals = Normals;
-
-			needsUpdate = false;
+			if (NormalsNeedUpdate) {
+				NormalsNeedUpdate = false;
+				mesh.normals = Normals;
+			}
 		}
 
 		private void PrintMeshInfo() {

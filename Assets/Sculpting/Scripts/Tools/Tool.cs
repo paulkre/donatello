@@ -11,17 +11,11 @@
 
 		protected Deformer Deformer { get; private set; }
 
-		private Menu menu;
-
-		public Tool(ToolType type, SculptMesh sculptMesh, Deformer deformer,  Menu menu) {
-			this.menu = menu;
+		public Tool(ToolType type, SculptMesh sculptMesh, Deformer deformer) {
 			Type = type;
 			SculptMesh = sculptMesh;
 			Deformer = deformer;
 		}
-
-		protected float Size { get { return menu.ToolSize.Value; } }
-		protected float Hardness { get { return menu.ToolHardness.Value; } }
 
 		public abstract void Use(SculptState state);
 	}

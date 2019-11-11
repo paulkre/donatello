@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 namespace VRSculpting.Sculptor {
+	using Settings;
 
 	public struct SculptState {
 		public Vector3 position;
@@ -10,6 +11,10 @@ namespace VRSculpting.Sculptor {
 		public bool drawingDown;
 		public bool drawingUp;
 		public bool drawingInverted;
+
+		public Matrix4x4 worldToLocal;
+
+		public MenuState menuState;
 	}
 
 }

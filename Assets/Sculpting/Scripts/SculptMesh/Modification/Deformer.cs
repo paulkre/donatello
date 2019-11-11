@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 namespace VRSculpting.SculptMesh.Modification {
+	using Settings;
+	using Sculptor;
 
 	public class Deformer {
 
@@ -23,10 +25,11 @@ namespace VRSculpting.SculptMesh.Modification {
 			MaskCount = 0;
 		}
 
-		public void UpdateMask(Vector3 center, float radius, float weightStrength = 2f) {
-			center = mesh.Wrapper.WorldToLocal(center);
-			radius = mesh.Wrapper.WorldToLocal(radius);
-
+		public void UpdateMask(SculptState state) {
+			Vector3 center = state.worldToLocal.MultiplyPoint(state.position);
+			float radius = (state.menuState.toolSize * state.worldToLocal.lossyScale.x) / 2;
+			float weightStrength = state.menuState.toolHardness;
+			
 			MaskCount = mesh.Select(center, radius, Mask);
 
 			var points = mesh.Points;
@@ -42,7 +45,7 @@ namespace VRSculpting.SculptMesh.Modification {
 		}
 
 		public void ApplyDeformation() {
-			mesh.ApplyDeformation(this);
+			mesh.AddDeformation(this);
 		}
 
 	}

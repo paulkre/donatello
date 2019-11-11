@@ -12,14 +12,13 @@ namespace VRSculpting.Tools {
 		
 		public SmoothTool(
 			SculptMesh mesh,
-			Deformer deformer,
-			Menu menu
-		) : base(ToolType.Smooth, mesh, deformer, menu) { }
+			Deformer deformer
+		) : base(ToolType.Smooth, mesh, deformer) { }
 
 		public override void Use(SculptState state) {
 			var deformer = Deformer;
 
-			deformer.UpdateMask(state.position, Size / 2, Hardness);
+			deformer.UpdateMask(state);
 
 			var mask = deformer.Mask;
 			var edgeRecorder = new HashSet<int>();

@@ -30,21 +30,19 @@ namespace VRSculpting {
 			var meshWrapper = Instantiate(meshWrapperPrefab);
 			meshWrapper.Init(subdivisionLevel, radius);
 			sculptMesh = meshWrapper.SculptMesh;
+		}
 
+		private void Start() {
 			if (sculptors != null)
-				foreach (var sculptor in sculptors) sculptor.Init(sculptMesh);
-
+				foreach (var sculptor in sculptors)
+					sculptor.Init(sculptMesh);
 		}
 
 		private void Update() {
 			FrameCount = Time.frameCount;
-
-			if (sculptors == null) return;
-
-			foreach (var s in sculptors)
-				s.Sculpt();
-			
 			sculptMesh.UpdateMeshData();
 		}
+
 	}
+
 }
