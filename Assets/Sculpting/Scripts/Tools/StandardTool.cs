@@ -18,7 +18,7 @@ namespace VRSculpting.Tools {
 		public override void Use(SculptState state) {
 			var deformer = Deformer;
 
-			deformer.UpdateMask(state.position, Size / 2, Hardness);
+			deformer.UpdateMask(state);
 
 			var mask = deformer.Mask;
 			var deformation = deformer.Deformation;

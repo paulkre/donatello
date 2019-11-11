@@ -21,18 +21,13 @@ namespace VRSculpting.Tools {
 			var deformer = Deformer;
 
 			if (state.drawingDown) {
-				deformer.UpdateMask(
-					state.position,
-					Size / 2,
-					Hardness
-				);
+				deformer.UpdateMask(state);
 				prevPosition = state.position;
 			}
 
 			if (deformer.MaskCount == 0) return;
-
-			var trm = SculptMesh.Wrapper.MeshTransform;
-			var delta = trm.InverseTransformPoint(state.position) - trm.InverseTransformPoint(prevPosition);
+			
+			var delta = state.worldToLocal * state.position - state.worldToLocal * prevPosition;
 
 			var deformation = deformer.Deformation;
 			for (int i = 0; i < deformer.MaskCount; ++i)
