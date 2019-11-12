@@ -15,6 +15,8 @@ namespace VRSculpting.Settings {
 			};
 
 			selectedParameterId = 0;
+
+			ExportAction = new Action();
 		}
 
 		public MenuState GetState() {
@@ -79,6 +81,12 @@ namespace VRSculpting.Settings {
 
 		public Parameter ToolSize { get { return Parameters[0]; } }
 		public Parameter ToolHardness { get { return Parameters[1]; } }
+
+		#endregion
+
+		#region settings
+
+		public Action ExportAction { get; private set; }
 
 		#endregion
 
