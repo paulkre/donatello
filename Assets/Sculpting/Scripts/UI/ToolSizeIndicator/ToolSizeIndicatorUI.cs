@@ -24,7 +24,7 @@ namespace VRSculpting.UI.ToolSizeIndicator {
 		}
 
 		public override void Init(Menu menu) {
-			points = new Vector3[resolution + 2];
+			points = new Vector3[resolution];
 			for (int i = 0; i < points.Length; i++) {
 				float angle = i * step;
 				points[i] = new Vector3(
