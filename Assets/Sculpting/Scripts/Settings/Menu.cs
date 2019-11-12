@@ -24,7 +24,8 @@ namespace VRSculpting.Settings {
 			return new MenuState {
 				tool = CurrentTool,
 				toolSize = ToolSize.Value,
-				toolHardness = ToolHardness.Value
+				toolHardness = ToolHardness.Value,
+				appMenuEnabled = AppMenuEnabled.Value
 			};
 		}
 

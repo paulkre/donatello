@@ -54,6 +54,7 @@ namespace VRSculpting.Sculptor {
 			mat.SetVector($"_BrushPos", currentState.position);
 			mat.SetFloat($"_BrushRadius", Menu.ToolSize.Value / 2);
 			mat.SetFloat($"_BrushHardness", Menu.ToolHardness.Value);
+			mat.SetFloat($"_MenuEnabled", Menu.AppMenuEnabled.Value ? 1 : 0);
 
 			stateStack.Push(currentState);
 		}
@@ -65,6 +66,8 @@ namespace VRSculpting.Sculptor {
 		}
 
 		private void Sculpt(SculptState state) {
+			if (state.menuState.appMenuEnabled) return;
+
 			if (state.drawing)
 				mainColl[state.menuState.tool].Use(state);
 			else if (state.drawingUp)
