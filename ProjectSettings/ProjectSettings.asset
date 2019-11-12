@@ -564,10 +564,10 @@ PlayerSettings:
   metroPackageName: Template3D
   metroPackageVersion: 1.0.0.0
   metroCertificatePath: Assets/WSATestCertificate.pfx
-  metroCertificatePassword: g=;?9:8>
+  metroCertificatePassword: =>?89
   metroCertificateSubject: paulkre
   metroCertificateIssuer: paulkre
-  metroCertificateNotAfter: 80ac408752b8d601
+  metroCertificateNotAfter: 0047fbfc57b8d601
   metroApplicationDescription: Template_3D
   wsaImages: {}
   metroTileShortName: donatello

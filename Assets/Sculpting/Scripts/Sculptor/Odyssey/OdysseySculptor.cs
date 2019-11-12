@@ -51,18 +51,12 @@ namespace VRSculpting.Sculptor.Odyssey {
 		private void ManageInput() {
 			UpdateControllerTransforms(leftController, XRNode.LeftHand);
 			UpdateControllerTransforms(rightController, XRNode.RightHand);
-
-			string gripRightInput = "Odyssey Grip Press Right";
-			string gripLeftInput = "Odyssey Grip Press Left";
+			
 			transformInputManager.ManageInput(
 				rightController.position,
 				leftController.position,
-				Input.GetButton(gripRightInput),
-				Input.GetButton(gripLeftInput),
-				Input.GetButtonDown(gripRightInput),
-				Input.GetButtonDown(gripLeftInput),
-				Input.GetButtonUp(gripRightInput),
-				Input.GetButtonUp(gripLeftInput)
+				Input.GetAxis("Odyssey Grip Squeeze Right"),
+				Input.GetAxis("Odyssey Grip Squeeze Left")
 			);
 
 			toolInputManager.ManageInput(Input.GetAxis("Odyssey Thumbstick Horizontal Left"));
