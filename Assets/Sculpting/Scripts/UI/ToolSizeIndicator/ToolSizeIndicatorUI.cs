@@ -47,8 +47,8 @@ namespace VRSculpting.UI.ToolSizeIndicator {
 		private void Update() {
 			transform.rotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position);
 
-			float targetAlpha = Time.time - lastChange <= activeDuration ? 1f : 0f;
-			alpha += (targetAlpha - alpha) * .25f;
+			float targetAlpha = Time.time - lastChange <= activeDuration ? 1f : .035f;
+			alpha += (targetAlpha - alpha) * .1f;
 			lineRenderer.startColor = lineRenderer.endColor = new Color(1, 1, 1, alpha);
 		}
 
