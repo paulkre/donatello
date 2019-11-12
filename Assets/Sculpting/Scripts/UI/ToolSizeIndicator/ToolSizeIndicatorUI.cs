@@ -6,7 +6,7 @@ namespace VRSculpting.UI.ToolSizeIndicator {
 	[RequireComponent(typeof(LineRenderer))]
 	public class ToolSizeIndicatorUI : UI {
 
-		private static int resolution = 64;
+		private static int resolution = 96;
 		private static float step = (2 * Mathf.PI) / resolution;
 		private static float lineWidth = .001f;
 		private static float activeDuration = .5f;
@@ -24,7 +24,7 @@ namespace VRSculpting.UI.ToolSizeIndicator {
 		}
 
 		public override void Init(Menu menu) {
-			points = new Vector3[resolution + 2];
+			points = new Vector3[resolution];
 			for (int i = 0; i < points.Length; i++) {
 				float angle = i * step;
 				points[i] = new Vector3(
@@ -47,8 +47,8 @@ namespace VRSculpting.UI.ToolSizeIndicator {
 		private void Update() {
 			transform.rotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position);
 
-			float targetAlpha = Time.time - lastChange <= activeDuration ? 1f : 0f;
-			alpha += (targetAlpha - alpha) * .25f;
+			float targetAlpha = Time.time - lastChange <= activeDuration ? 1f : .035f;
+			alpha += (targetAlpha - alpha) * .1f;
 			lineRenderer.startColor = lineRenderer.endColor = new Color(1, 1, 1, alpha);
 		}
 
