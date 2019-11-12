@@ -44,3 +44,6 @@ Unity_v*.x.ulf
 /.vscode/
 
 /Assets/cvs/
+
+/Assets/WSATestCertificate.pfx
+/Assets/WSATestCertificate.pfx.meta
