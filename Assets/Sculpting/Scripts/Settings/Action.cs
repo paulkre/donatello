@@ -6,6 +6,8 @@
 
 		public event OnDoneHandler OnDone;
 
+		public void Do() { OnDone?.Invoke(); }
+
 	}
 
 }

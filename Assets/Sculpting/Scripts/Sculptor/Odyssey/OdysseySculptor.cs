@@ -54,6 +54,9 @@ namespace VRSculpting.Sculptor.Odyssey {
 
 			var menuButtonDown = Input.GetButtonDown("Odyssey Menu Press Right");
 			if (menuButtonDown) Menu.AppMenuEnabled.Toggle();
+
+			if (Menu.AppMenuEnabled.Value && Input.GetButtonDown("Odyssey Trigger Right"))
+				Menu.DoAction.Do();
 			
 			transformInputManager.ManageInput(
 				rightController.position,

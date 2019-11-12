@@ -18,6 +18,11 @@ namespace VRSculpting.Settings {
 
 			ExportAction = new Action();
 			AppMenuEnabled = new Switch();
+			DoAction = new Action();
+
+			ExportAction.OnDone += () => {
+				Debug.Log("EXPORTING");
+			};
 		}
 
 		public MenuState GetState() {
@@ -91,6 +96,8 @@ namespace VRSculpting.Settings {
 		public Switch AppMenuEnabled { get; private set; }
 
 		public Action ExportAction { get; private set; }
+
+		public Action DoAction { get; private set; }
 
 		#endregion
 

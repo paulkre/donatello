@@ -17,6 +17,8 @@ namespace VRSculpting.UI.AppMenu {
 
 		private new bool enabled;
 
+		Button activeButton;
+
 		private bool Enabled {
 			set {
 				GetComponent<Canvas>().enabled = value;
@@ -29,8 +31,15 @@ namespace VRSculpting.UI.AppMenu {
 			pointer = Instantiate(pointerPrefab, rightController, false);
 
 			Enabled = menu.AppMenuEnabled.Value;
+
+			exportButtonReference.OnClick += menu.ExportAction.Do;
+
 			menu.AppMenuEnabled.OnChange += (value) => {
 				Enabled = value;
+			};
+
+			menu.DoAction.OnDone += () => {
+				if (activeButton != null) activeButton.Click();
 			};
 		}
 
@@ -55,9 +64,18 @@ namespace VRSculpting.UI.AppMenu {
 				out hit
 			);
 
-			pointer.Length = intersected
-				? Vector3.Distance(trm.position, hit.point)
-				: 1000;
+			if (intersected) {
+				pointer.Length = Vector3.Distance(trm.position, hit.point);
+				activeButton = hit.collider.GetComponent<Button>();
+				if (activeButton != null)
+					activeButton.Hover = true;
+			} else {
+				pointer.Length = 1000;
+				if (activeButton != null) {
+					activeButton.Hover = false;
+					activeButton = null;
+				}
+			}
 		}
 
 	}
