@@ -19,8 +19,8 @@ namespace VRSculpting.Sculptor.Odyssey {
 		private ToolInputManager toolInputManager;
 		private ParameterInputManager parameterInputManager;
 
-		public override void Init(SculptMesh.Modification.SculptMesh mesh) {
-			base.Init(mesh);
+		public override void Init(SculptMesh.Modification.SculptMesh mesh, Settings.Menu menu) {
+			base.Init(mesh, menu);
 
 			transformInputManager = new TransformInputManager(MeshWrapper);
 			toolInputManager = new ToolInputManager(Menu);

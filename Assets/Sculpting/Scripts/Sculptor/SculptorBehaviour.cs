@@ -26,10 +26,10 @@ namespace VRSculpting.Sculptor {
 
 		private bool running;
 
-		public virtual void Init(SculptMesh sculptMesh) {
+		public virtual void Init(SculptMesh sculptMesh, Menu menu) {
 			MeshWrapper = sculptMesh.Wrapper;
 
-			Menu = new Menu(ToolType.Standard);
+			Menu = menu;
 
 			deformer = new Deformer(sculptMesh);
 
