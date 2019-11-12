@@ -6,7 +6,7 @@ namespace VRSculpting.UI.ToolSizeIndicator {
 	[RequireComponent(typeof(LineRenderer))]
 	public class ToolSizeIndicatorUI : UI {
 
-		private static int resolution = 64;
+		private static int resolution = 96;
 		private static float step = (2 * Mathf.PI) / resolution;
 		private static float lineWidth = .001f;
 		private static float activeDuration = .5f;
