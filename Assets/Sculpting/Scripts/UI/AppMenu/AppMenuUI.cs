@@ -2,6 +2,7 @@
 
 namespace VRSculpting.UI.AppMenu {
 
+	[RequireComponent(typeof(Canvas))]
 	public class AppMenuUI : UI {
 
 		private float viewDistance = 1f;
@@ -14,11 +15,28 @@ namespace VRSculpting.UI.AppMenu {
 
 		private Pointer pointer;
 
+		private new bool enabled;
+
+		private bool Enabled {
+			set {
+				GetComponent<Canvas>().enabled = value;
+				pointer.Enabled = value;
+				enabled = value;
+			}
+		}
+
 		public override void Init(Settings.Menu menu) {
 			pointer = Instantiate(pointerPrefab, rightController, false);
+
+			Enabled = menu.AppMenuEnabled.Value;
+			menu.AppMenuEnabled.OnChange += (value) => {
+				Enabled = value;
+			};
 		}
 
 		private void Update() {
+			if (!enabled) return;
+
 			var cam = Camera.main.transform;
 			var targetPosition = cam.position + viewDistance * cam.forward;
 			transform.position += (targetPosition - transform.position) * .05f;

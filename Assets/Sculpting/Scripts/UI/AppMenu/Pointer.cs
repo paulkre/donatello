@@ -11,6 +11,10 @@ namespace VRSculpting.UI.AppMenu {
 
 		public Vector3 Forward { get { return transform.forward; } }
 
+		public bool Enabled {
+			set { GetComponent<LineRenderer>().enabled = value; }
+		}
+
 		private void Awake() {
 			var lr = GetComponent<LineRenderer>();
 			lr.startWidth = lr.endWidth = lineWidth;

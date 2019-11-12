@@ -162,7 +162,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5718586736260469022}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
@@ -221,6 +221,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7186996222366343783}
     m_Modifications:
+    - target: {fileID: 1322919690272465918, guid: 4b8661a29d2b35544b207c0a51fac128,
+        type: 3}
+      propertyPath: m_Name
+      value: ExportButton
+      objectReference: {fileID: 0}
     - target: {fileID: 222167998011858043, guid: 4b8661a29d2b35544b207c0a51fac128,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -325,11 +330,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1322919690272465918, guid: 4b8661a29d2b35544b207c0a51fac128,
-        type: 3}
-      propertyPath: m_Name
-      value: ExportButton
       objectReference: {fileID: 0}
     - target: {fileID: 9152928445534943555, guid: 4b8661a29d2b35544b207c0a51fac128,
         type: 3}

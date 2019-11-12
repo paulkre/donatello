@@ -51,6 +51,9 @@ namespace VRSculpting.Sculptor.Odyssey {
 		private void ManageInput() {
 			UpdateControllerTransforms(leftController, XRNode.LeftHand);
 			UpdateControllerTransforms(rightController, XRNode.RightHand);
+
+			var menuButtonDown = Input.GetButtonDown("Odyssey Menu Press Right");
+			if (menuButtonDown) Menu.AppMenuEnabled.Toggle();
 			
 			transformInputManager.ManageInput(
 				rightController.position,

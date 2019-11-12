@@ -17,6 +17,7 @@ namespace VRSculpting.Settings {
 			selectedParameterId = 0;
 
 			ExportAction = new Action();
+			AppMenuEnabled = new Switch();
 		}
 
 		public MenuState GetState() {
@@ -85,6 +86,8 @@ namespace VRSculpting.Settings {
 		#endregion
 
 		#region settings
+
+		public Switch AppMenuEnabled { get; private set; }
 
 		public Action ExportAction { get; private set; }
 
