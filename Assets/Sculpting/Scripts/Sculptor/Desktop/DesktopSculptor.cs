@@ -23,6 +23,7 @@ namespace VRSculpting.Sculptor.Desktop {
 			if (Input.GetKeyDown("1")) Menu.CurrentTool = ToolType.Standard;
 			if (Input.GetKeyDown("2")) Menu.CurrentTool = ToolType.Move;
 			if (Input.GetKeyDown("3")) Menu.CurrentTool = ToolType.Smooth;
+			if (Input.GetKeyDown("4")) Menu.CurrentTool = ToolType.Noise;
 
 			if (Input.GetKeyDown("w")) Menu.ToolSize.Value += parameterModStrength;
 			if (Input.GetKeyDown("q")) Menu.ToolSize.Value -= parameterModStrength;

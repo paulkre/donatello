@@ -2,6 +2,7 @@
 	public enum ToolType {
 		Standard,
 		Move,
-		Smooth
+		Smooth,
+		Noise
 	}
 }

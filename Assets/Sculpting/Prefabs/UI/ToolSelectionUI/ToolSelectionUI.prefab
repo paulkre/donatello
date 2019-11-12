@@ -55,3 +55,6 @@ MonoBehaviour:
   - label: Smooth
     tool: 2
     icon: {fileID: 2800000, guid: 3b4415dbed28c9e4da98d06954c7a4ea, type: 3}
+  - label: Noise
+    tool: 3
+    icon: {fileID: 0}

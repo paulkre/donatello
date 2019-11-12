@@ -12,6 +12,7 @@ namespace VRSculpting.Tools {
 				{ ToolType.Standard,  new StandardTool(sculptMesh, deformer)},
 				{ ToolType.Move,  new MoveTool(sculptMesh, deformer)},
 				{ ToolType.Smooth,  new SmoothTool(sculptMesh, deformer)},
+				{ ToolType.Noise,  new NoiseTool(sculptMesh, deformer)},
 			}
 		) { }
 
