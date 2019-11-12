@@ -5,11 +5,16 @@ namespace VRSculpting.Sculptor.Odyssey {
 
 	public class TransformInputManager {
 
+		private static float pressThreshold = .5f;
+
 		private Vector3 lastTranslatePoint;
 		private Vector3 lastDirection;
 
 		private bool isScalingAndRotating;
 		private float lastScaleDistance;
+
+		private bool lastGripRightState;
+		private bool lastGripLeftState;
 
 		private MeshWrapperBehaviour meshWrapper;
 
@@ -20,13 +25,21 @@ namespace VRSculpting.Sculptor.Odyssey {
 		public void ManageInput(
 			Vector3 rightPoint,
 			Vector3 leftPoint,
-			bool gripRight,
-			bool gripLeft,
-			bool gripRightDown,
-			bool gripLeftDown,
-			bool gripRightUp,
-			bool gripLeftUp
+			float gripRightSqueeze,
+			float gripLeftSqueeze
 		) {
+			bool gripRight = gripRightSqueeze > pressThreshold;
+			bool gripLeft = gripLeftSqueeze > pressThreshold;
+
+			bool gripRightDown = gripRight && !lastGripRightState;
+			bool gripLeftDown = gripLeft && !lastGripLeftState;
+
+			bool gripRightUp = !gripRight && lastGripRightState;
+			bool gripLeftUp = !gripLeft && lastGripLeftState;
+
+			lastGripRightState = gripRight;
+			lastGripLeftState = gripLeft;
+
 			if (isScalingAndRotating || (gripRight && gripLeft)) {
 				var vec = leftPoint - rightPoint;
 				var distance = vec.magnitude;
