@@ -12,10 +12,10 @@ namespace VRSculpting {
 		[Header("Mesh")]
 
 		[SerializeField]
-		private int subdivisionLevel = 6;
+		public int subdivisionLevel = 6;
 
 		[SerializeField]
-		private float radius = .5f;
+		public float radius = .5f;
 
 		[SerializeField]
 		public MeshWrapperBehaviour meshWrapperPrefab;
@@ -33,9 +33,10 @@ namespace VRSculpting {
 		}
 
 		private void Start() {
+			var menu = new Settings.Menu(Tools.ToolType.Standard);
 			if (sculptors != null)
 				foreach (var sculptor in sculptors)
-					sculptor.Init(sculptMesh);
+					sculptor.Init(sculptMesh, menu);
 		}
 
 		private void Update() {

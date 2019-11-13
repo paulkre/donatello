@@ -15,13 +15,22 @@ namespace VRSculpting.Settings {
 			};
 
 			selectedParameterId = 0;
+
+			ExportAction = new Action();
+			AppMenuEnabled = new Switch();
+			DoAction = new Action();
+
+			ExportAction.OnDone += () => {
+				Debug.Log("EXPORTING");
+			};
 		}
 
 		public MenuState GetState() {
 			return new MenuState {
 				tool = CurrentTool,
 				toolSize = ToolSize.Value,
-				toolHardness = ToolHardness.Value
+				toolHardness = ToolHardness.Value,
+				appMenuEnabled = AppMenuEnabled.Value
 			};
 		}
 
@@ -79,6 +88,16 @@ namespace VRSculpting.Settings {
 
 		public Parameter ToolSize { get { return Parameters[0]; } }
 		public Parameter ToolHardness { get { return Parameters[1]; } }
+
+		#endregion
+
+		#region settings
+
+		public Switch AppMenuEnabled { get; private set; }
+
+		public Action ExportAction { get; private set; }
+
+		public Action DoAction { get; private set; }
 
 		#endregion
 

@@ -19,8 +19,8 @@ namespace VRSculpting.Sculptor.Odyssey {
 		private ToolInputManager toolInputManager;
 		private ParameterInputManager parameterInputManager;
 
-		public override void Init(SculptMesh.Modification.SculptMesh mesh) {
-			base.Init(mesh);
+		public override void Init(SculptMesh.Modification.SculptMesh mesh, Settings.Menu menu) {
+			base.Init(mesh, menu);
 
 			transformInputManager = new TransformInputManager(MeshWrapper);
 			toolInputManager = new ToolInputManager(Menu);
@@ -51,6 +51,12 @@ namespace VRSculpting.Sculptor.Odyssey {
 		private void ManageInput() {
 			UpdateControllerTransforms(leftController, XRNode.LeftHand);
 			UpdateControllerTransforms(rightController, XRNode.RightHand);
+
+			var menuButtonDown = Input.GetButtonDown("Odyssey Menu Press Right");
+			if (menuButtonDown) Menu.AppMenuEnabled.Toggle();
+
+			if (Menu.AppMenuEnabled.Value && Input.GetButtonDown("Odyssey Trigger Right"))
+				Menu.DoAction.Do();
 			
 			transformInputManager.ManageInput(
 				rightController.position,
