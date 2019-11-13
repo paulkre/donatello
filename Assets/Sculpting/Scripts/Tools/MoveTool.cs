@@ -1,40 +1,45 @@
 ﻿using UnityEngine;
 
-namespace VRSculpting.Tools {
-	using SculptMesh.Modification;
-	using Sculptor;
-	using Settings;
+namespace VRSculpting.Tools
+{
+    using SculptMesh.Modification;
+    using Sculptor;
+    using Settings;
 
-	public class MoveTool : Tool {
+    public class MoveTool : Tool
+    {
 
-		private Vector3 prevPosition;
+        private Vector3 prevPosition;
 
-		public MoveTool(
-			SculptMesh mesh,
-			Deformer deformer
-		) : base(ToolType.Move, mesh, deformer) {
-			prevPosition = Vector3.zero;
-		}
+        public MoveTool(
+            SculptMesh mesh,
+            Deformer deformer
+        ) : base(ToolType.Move, mesh, deformer)
+        {
+            prevPosition = Vector3.zero;
+        }
 
-		public override void Use(SculptState state) {
-			var deformer = Deformer;
+        public override void Use(SculptState state)
+        {
+            var deformer = Deformer;
 
-			if (state.drawingDown) {
-				deformer.UpdateMask(state);
-				prevPosition = state.position;
-			}
+            if (state.drawingDown)
+            {
+                deformer.UpdateMask(state);
+                prevPosition = state.position;
+            }
 
-			if (deformer.MaskCount == 0) return;
-			
-			var delta = state.worldToLocal * state.position - state.worldToLocal * prevPosition;
+            if (deformer.MaskCount == 0) return;
 
-			var deformation = deformer.Deformation;
-			for (int i = 0; i < deformer.MaskCount; ++i)
-				deformation[i] = delta;
+            var delta = state.worldToLocal * state.position - state.worldToLocal * prevPosition;
 
-			prevPosition = state.position;
+            var deformation = deformer.Deformation;
+            for (int i = 0; i < deformer.MaskCount; ++i)
+                deformation[i] = delta;
 
-			deformer.ApplyDeformation();
-		}
-	}
+            prevPosition = state.position;
+
+            deformer.ApplyDeformation();
+        }
+    }
 }

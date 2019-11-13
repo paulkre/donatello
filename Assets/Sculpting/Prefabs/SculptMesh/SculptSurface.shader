@@ -1,15 +1,16 @@
 ﻿Shader "VRSculpting/SculptSurface" {
-	Properties {
+	Properties{
 		_Color("Color", Color) = (0.5, 0.5, 0.5, 1.0)
 		_SelectColor("Selection Color", Color) = (0.0, 1.0, 0.0, 1.0)
-		_Glossiness ("Smoothness", Range(0,1)) = 0.5
+		_Glossiness("Smoothness", Range(0,1)) = 0.5
 
-		_BrushPos ("Brush Position", Vector) = (1.0, 1.0, 1.0, 1.0)
+		_BrushPos("Brush Position", Vector) = (1.0, 1.0, 1.0, 1.0)
 		_BrushRadius("Brush Radius", Float) = 0.25
 		_BrushHardness("Brush Hardness", Float) = 2.0
 		[MaterialToggle] _MenuEnabled("Menu Enabled", Float) = 0.0
 	}
-	SubShader {
+
+	SubShader{
 		Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
 		LOD 200
 
@@ -27,7 +28,7 @@
 		half _Glossiness;
 		fixed4 _Color;
 		fixed4 _SelectColor;
-				
+
 		fixed4 _BrushPos;
 		float _BrushRadius;
 		float _BrushHardness;
@@ -45,7 +46,7 @@
 			return pow(x * x * (3 - 2 * x), _BrushHardness);
 		}
 
-		void surf (Input IN, inout SurfaceOutputStandard o) {
+		void surf(Input IN, inout SurfaceOutputStandard o) {
 			float d = distance(IN.worldPos, _BrushPos);
 
 			if (_MenuEnabled < 1.0) {
@@ -63,5 +64,6 @@
 		}
 		ENDCG
 	}
+
 	FallBack "Diffuse"
 }

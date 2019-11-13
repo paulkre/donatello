@@ -1,7 +1,9 @@
-﻿namespace VRSculpting.Tools {
-	public enum ToolType {
-		Standard,
-		Move,
-		Smooth
-	}
+﻿namespace VRSculpting.Tools
+{
+    public enum ToolType
+    {
+        Standard,
+        Move,
+        Smooth
+    }
 }
