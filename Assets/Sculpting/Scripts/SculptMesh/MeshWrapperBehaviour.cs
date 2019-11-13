@@ -1,36 +1,40 @@
 ﻿using UnityEngine;
 
-namespace VRSculpting.SculptMesh {
-	
-	public class MeshWrapperBehaviour : MonoBehaviour {
+namespace VRSculpting.SculptMesh
+{
 
-		private bool initialized = false;
+    public class MeshWrapperBehaviour : MonoBehaviour
+    {
 
-		[SerializeField]
-		public SculptMeshBehaviour sculptMeshReference;
+        private bool initialized = false;
 
-		public Modification.SculptMesh SculptMesh { get; private set; }
+        [SerializeField]
+        public SculptMeshBehaviour sculptMeshReference;
 
-		public Material Material { get { return sculptMeshReference.Material; } }
+        public Modification.SculptMesh SculptMesh { get; private set; }
 
-		public Transform MeshTransform { get { return sculptMeshReference.transform; } }
+        public Material Material { get { return sculptMeshReference.Material; } }
 
-		public void Init(int subdivisionLevel = 6, float radius = .5f) {
-			if (sculptMeshReference == null || initialized) return;
+        public Transform MeshTransform { get { return sculptMeshReference.transform; } }
 
-			var mesh = IcoSphereCreator.Create(subdivisionLevel, radius);
+        public void Init(int subdivisionLevel = 6, float radius = .5f)
+        {
+            if (sculptMeshReference == null || initialized) return;
 
-			SculptMesh = new Modification.SculptMesh(this, mesh);
-			sculptMeshReference.Mesh = SculptMesh.Mesh;
+            var mesh = IcoSphereCreator.Create(subdivisionLevel, radius);
 
-			initialized = true;
-		}
+            SculptMesh = new Modification.SculptMesh(this, mesh);
+            sculptMeshReference.Mesh = SculptMesh.Mesh;
 
-		public void ApplyRotation() {
-			var tmp = MeshTransform.rotation;
-			transform.rotation = Quaternion.Euler(Vector3.zero);
-			sculptMeshReference.transform.rotation = tmp;
-		}
+            initialized = true;
+        }
 
-	}
+        public void ApplyRotation()
+        {
+            var tmp = MeshTransform.rotation;
+            transform.rotation = Quaternion.Euler(Vector3.zero);
+            sculptMeshReference.transform.rotation = tmp;
+        }
+
+    }
 }

@@ -1,38 +1,41 @@
 ﻿using UnityEngine;
 
-namespace VRSculpting.Tools {
-	using SculptMesh.Modification;
-	using Sculptor;
-	using Settings;
+namespace VRSculpting.Tools
+{
+    using SculptMesh.Modification;
+    using Sculptor;
+    using Settings;
 
-	public class StandardTool : Tool {
+    public class StandardTool : Tool
+    {
 
-		private static float strength = .001f;
+        private static float strength = .001f;
 
-		public StandardTool(
-			SculptMesh mesh,
-			Deformer deformer
-		) : base(ToolType.Standard, mesh, deformer) { }
+        public StandardTool(
+            SculptMesh mesh,
+            Deformer deformer
+        ) : base(ToolType.Standard, mesh, deformer) { }
 
-		public override void Use(SculptState state) {
-			var deformer = Deformer;
+        public override void Use(SculptState state)
+        {
+            var deformer = Deformer;
 
-			deformer.UpdateMask(state);
+            deformer.UpdateMask(state);
 
-			var mask = deformer.Mask;
-			var deformation = deformer.Deformation;
+            var mask = deformer.Mask;
+            var deformation = deformer.Deformation;
 
-			Vector3 avgNormal = Vector3.zero;
-			for (int i = 0; i < deformer.MaskCount; i++)
-				avgNormal += SculptMesh.Normals[mask[i]];
-			avgNormal.Normalize();
+            Vector3 avgNormal = Vector3.zero;
+            for (int i = 0; i < deformer.MaskCount; i++)
+                avgNormal += SculptMesh.Normals[mask[i]];
+            avgNormal.Normalize();
 
-			float amp = strength * state.strength;
-			float inv = state.drawingInverted ? -1f : 1f;
-			for (int i = 0; i < deformer.MaskCount; ++i)
-				deformation[i] = amp * inv * avgNormal;
+            float amp = strength * state.strength;
+            float inv = state.drawingInverted ? -1f : 1f;
+            for (int i = 0; i < deformer.MaskCount; ++i)
+                deformation[i] = amp * inv * avgNormal;
 
-			deformer.ApplyDeformation();
-		}
-	}
+            deformer.ApplyDeformation();
+        }
+    }
 }

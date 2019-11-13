@@ -1,47 +1,52 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace VRSculpting.Tools {
-	using SculptMesh.Modification;
-	using Sculptor;
-	using Settings;
+namespace VRSculpting.Tools
+{
+    using SculptMesh.Modification;
+    using Sculptor;
+    using Settings;
 
-	public class SmoothTool : Tool {
+    public class SmoothTool : Tool
+    {
 
-		private static float strength = .05f;
-		
-		public SmoothTool(
-			SculptMesh mesh,
-			Deformer deformer
-		) : base(ToolType.Smooth, mesh, deformer) { }
+        private static float strength = .05f;
 
-		public override void Use(SculptState state) {
-			var deformer = Deformer;
+        public SmoothTool(
+            SculptMesh mesh,
+            Deformer deformer
+        ) : base(ToolType.Smooth, mesh, deformer) { }
 
-			deformer.UpdateMask(state);
+        public override void Use(SculptState state)
+        {
+            var deformer = Deformer;
 
-			var mask = deformer.Mask;
-			var edgeRecorder = new HashSet<int>();
+            deformer.UpdateMask(state);
 
-			Vector3[] deformation = deformer.Deformation;
-			for (int i = 0; i < deformer.MaskCount; i++) {
-				var vert = SculptMesh.Topology.Vertices[mask[i]];
-				var force = new Vector3();
+            var mask = deformer.Mask;
+            var edgeRecorder = new HashSet<int>();
 
-				foreach (var edge in vert.Edges) {
-					var other = edge.GetOtherVertex(vert);
-					var p0 = SculptMesh.Points[vert.Id];
-					var p1 = SculptMesh.Points[other.Id];
-					var delta = p1 - p0;
-					force += delta;
-				}
+            Vector3[] deformation = deformer.Deformation;
+            for (int i = 0; i < deformer.MaskCount; i++)
+            {
+                var vert = SculptMesh.Topology.Vertices[mask[i]];
+                var force = new Vector3();
 
-				deformation[i] = strength * state.strength * force;
-			}
+                foreach (var edge in vert.Edges)
+                {
+                    var other = edge.GetOtherVertex(vert);
+                    var p0 = SculptMesh.Points[vert.Id];
+                    var p1 = SculptMesh.Points[other.Id];
+                    var delta = p1 - p0;
+                    force += delta;
+                }
 
-			deformer.ApplyDeformation();
-		}
+                deformation[i] = strength * state.strength * force;
+            }
 
-	}
+            deformer.ApplyDeformation();
+        }
+
+    }
 
 }
