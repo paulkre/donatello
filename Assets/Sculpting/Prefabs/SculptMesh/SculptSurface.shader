@@ -11,12 +11,12 @@
 	}
 
 	SubShader{
-		Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
+		Tags { "RenderType" = "Opaque" }
 		LOD 200
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows alpha:fade
+		#pragma surface surf Standard fullforwardshadows
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -52,13 +52,12 @@
 			if (_MenuEnabled < 1.0) {
 				float amp = d < _BrushRadius ? 0.9 * max(0.0, 1.0 - smoothStep(d / _BrushRadius)) : 0.0;
 				o.Emission = amp * _SelectColor;
-				o.Alpha = 1.0;
+				o.Albedo = _Color;
 			}
 			else {
-				o.Alpha = 0.25;
+				o.Albedo = 0.5 * _Color;
 			}
 
-			o.Albedo = _Color;
 			o.Metallic = 0.0;
 			o.Smoothness = _Glossiness;
 		}
