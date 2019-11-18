@@ -2,6 +2,7 @@
 
 namespace VRSculpting
 {
+    using Helpers;
     using SculptMesh;
     using Sculptor;
 
@@ -41,6 +42,14 @@ namespace VRSculpting
             if (sculptors != null)
                 foreach (var sculptor in sculptors)
                     sculptor.Init(sculptMesh, menu);
+
+            menu.ExportAction.OnDone += () =>
+            {
+                ObjExporter.Export(
+                    sculptMesh.Mesh,
+                    sculptMesh.Wrapper.MeshTransform
+                );
+            };
         }
 
         private void Update()
