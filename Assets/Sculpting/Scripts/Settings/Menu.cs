@@ -22,11 +22,6 @@ namespace VRSculpting.Settings
             ExportAction = new Action();
             AppMenuEnabled = new Switch();
             DoAction = new Action();
-
-            ExportAction.OnDone += () =>
-            {
-                Debug.Log("EXPORTING");
-            };
         }
 
         public MenuState GetState()
