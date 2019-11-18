@@ -331,11 +331,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 9152928445534943555, guid: 4b8661a29d2b35544b207c0a51fac128,
-        type: 3}
-      propertyPath: label
-      value: Export Mesh
-      objectReference: {fileID: 0}
     - target: {fileID: 5962085842670782939, guid: 4b8661a29d2b35544b207c0a51fac128,
         type: 3}
       propertyPath: m_Color.r
@@ -350,6 +345,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Color.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9152928445534943555, guid: 4b8661a29d2b35544b207c0a51fac128,
+        type: 3}
+      propertyPath: label
+      value: Export .OBJ
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b8661a29d2b35544b207c0a51fac128, type: 3}
