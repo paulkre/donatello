@@ -52,26 +52,26 @@ namespace Tests {
 			}, "Select vertices");
 
 			Vector3 offset = Vector3.up * Random.value;
-			int pickId = Random.Range(0, deformer.Mask.Length);
+			int pickId = Random.Range(0, deformer.Selection.Length);
 
-			var vec = sculptMesh.Points[deformer.Mask[pickId]];
+			var vec = sculptMesh.Points[deformer.Selection[pickId]];
 			var weight = deformer.Weights[pickId];
 
 			timer.PrintTime(() => {
 				var deformation = deformer.Deformation;
-				for (int i = 0; i < deformer.MaskCount; ++i)
+				for (int i = 0; i < deformer.SelectionCount; ++i)
 					deformation[i] = offset;
 			}, "Create deform field");
 
 			timer.PrintTime(() => sculptMesh.UpdateMeshData(), "Update mesh data");
 
-			Debug.Log($"{deformer.MaskCount} vertices modified out of {sculptMesh.Points.Length}.\n");
+			Debug.Log($"{deformer.SelectionCount} vertices modified out of {sculptMesh.Points.Length}.\n");
 
 			timer.PrintTotalTime();
 			timer.SaveCsv();
 
 			Assert.Less(timer.TotalTime, 100);
-			Assert.AreEqual(sculptMesh.Points[deformer.Mask[pickId]], vec + weight * offset);
+			Assert.AreEqual(sculptMesh.Points[deformer.Selection[pickId]], vec + weight * offset);
 
 			yield return null;
 		}

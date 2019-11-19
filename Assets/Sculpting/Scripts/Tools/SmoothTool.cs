@@ -23,11 +23,11 @@ namespace VRSculpting.Tools
 
             deformer.UpdateMask(state);
 
-            var mask = deformer.Mask;
+            var mask = deformer.Selection;
             var edgeRecorder = new HashSet<int>();
 
             Vector3[] deformation = deformer.Deformation;
-            for (int i = 0; i < deformer.MaskCount; i++)
+            for (int i = 0; i < deformer.SelectionCount; i++)
             {
                 var vert = SculptMesh.Topology.Vertices[mask[i]];
                 var force = new Vector3();

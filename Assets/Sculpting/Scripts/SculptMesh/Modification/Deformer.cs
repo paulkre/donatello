@@ -10,11 +10,11 @@ namespace VRSculpting.SculptMesh.Modification
 
         private SculptMesh mesh;
 
-        public int[] Mask { get; private set; }
+        public int[] Selection { get; private set; }
         public float[] Weights { get; private set; }
         public Vector3[] Deformation { get; private set; }
 
-        public int MaskCount { get; private set; }
+        public int SelectionCount { get; private set; }
 
         public Deformer(SculptMesh mesh)
         {
@@ -22,10 +22,10 @@ namespace VRSculpting.SculptMesh.Modification
 
             int count = mesh.Points.Length;
 
-            Mask = new int[count];
+            Selection = new int[count];
             Weights = new float[count];
             Deformation = new Vector3[count];
-            MaskCount = 0;
+            SelectionCount = 0;
         }
 
         public void UpdateMask(SculptState state)
@@ -34,12 +34,12 @@ namespace VRSculpting.SculptMesh.Modification
             float radius = (state.menuState.toolSize * state.worldToLocal.lossyScale.x) / 2;
             float weightStrength = state.menuState.toolHardness;
 
-            MaskCount = mesh.Select(center, radius, Mask);
+            SelectionCount = mesh.Select(center, radius, Selection);
 
             var points = mesh.Points;
-            for (int i = 0; i < MaskCount; i++)
+            for (int i = 0; i < SelectionCount; i++)
             {
-                var p = points[Mask[i]];
+                var p = points[Selection[i]];
                 float t = Mathf.Clamp01(Vector3.Distance(center, p) / radius);
                 Weights[i] = 1f - Mathf.Pow(t * t * (3 - 2 * t), weightStrength);
             }
@@ -47,7 +47,7 @@ namespace VRSculpting.SculptMesh.Modification
 
         public void Unmask()
         {
-            MaskCount = 0;
+            SelectionCount = 0;
         }
 
         public void ApplyDeformation()

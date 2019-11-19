@@ -72,11 +72,11 @@ namespace VRSculpting.SculptMesh.Modification
         {
             IsAddingDeformation = true;
 
-            int[] ids = deformer.Mask;
+            int[] ids = deformer.Selection;
             float[] weights = deformer.Weights;
             Vector3[] deformation = deformer.Deformation;
 
-            for (int i = 0; i < deformer.MaskCount; ++i)
+            for (int i = 0; i < deformer.SelectionCount; ++i)
             {
                 int id = ids[i];
                 this.deformation[id] += weights[i] * deformation[i];
