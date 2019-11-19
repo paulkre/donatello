@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace VRSculpting.Sculptor
 {
-    using Tools;
     using SculptMesh;
     using SculptMesh.Modification;
     using Settings;
