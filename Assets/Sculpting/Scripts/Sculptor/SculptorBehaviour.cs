@@ -11,8 +11,6 @@ namespace VRSculpting.Sculptor
 
     public abstract class SculptorBehaviour : MonoBehaviour
     {
-        private bool symmetry = true;
-
         public List<UI.UI> uiComponents;
 
         private ToolCollection tools;
@@ -63,11 +61,8 @@ namespace VRSculpting.Sculptor
             mat.SetFloat($"_BrushHardness", Menu.ToolHardness.Value);
             mat.SetFloat($"_MenuEnabled", Menu.AppMenuEnabled.Value ? 1 : 0);
 
-            if (symmetry)
-            {
-                mat.SetFloat($"_SymmetryEnabled", symmetry ? 1 : 0);
-                mat.SetVector($"_BrushPosMirrored", GetMirroredPosition(currentState));
-            }
+            mat.SetFloat($"_SymmetryEnabled", Menu.SymmetryEnabled.Value ? 1 : 0);
+            mat.SetVector($"_BrushPosMirrored", GetMirroredPosition(currentState));
 
             stateStack.Push(currentState);
         }
@@ -86,7 +81,7 @@ namespace VRSculpting.Sculptor
             if (state.drawing)
             {
                 tools[state.menuState.tool].Use(state, deformer);
-                if (symmetry)
+                if (state.menuState.symmetryEnabled)
                 {
                     state.position = GetMirroredPosition(state);
                     mirrorTools[state.menuState.tool].Use(state, mirrorDeformer);

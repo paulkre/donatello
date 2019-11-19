@@ -32,7 +32,8 @@ namespace VRSculpting.Settings
                 tool = CurrentTool,
                 toolSize = ToolSize.Value,
                 toolHardness = ToolHardness.Value,
-                appMenuEnabled = AppMenuEnabled.Value
+                appMenuEnabled = AppMenuEnabled.Value,
+                symmetryEnabled = SymmetryEnabled.Value
             };
         }
 

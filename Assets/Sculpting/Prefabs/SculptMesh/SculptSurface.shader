@@ -62,13 +62,13 @@
 			if (_MenuEnabled < 1.0) {
 				o.Emission = amp(IN.worldPos, _BrushPos) * _SelectColor;
 				o.Albedo = _Color;
+
+				if (_SymmetryEnabled == 1.0) {
+					o.Emission += amp(IN.worldPos, _BrushPosMirrored) * _SelectColorMirrored;
+				}
 			}
 			else {
 				o.Albedo = 0.5 * _Color;
-			}
-
-			if (_SymmetryEnabled == 1.0) {
-				o.Emission += amp(IN.worldPos, _BrushPosMirrored) * _SelectColorMirrored;
 			}
 
 			o.Metallic = 0.0;
