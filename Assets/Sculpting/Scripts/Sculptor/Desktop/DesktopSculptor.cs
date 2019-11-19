@@ -16,10 +16,15 @@ namespace VRSculpting.Sculptor.Desktop
 
         private Vector3 activePosition;
 
-        private void Awake()
+        public override void Init(SculptMesh.Modification.SculptMesh sculptMesh, Settings.Menu menu)
         {
+            base.Init(sculptMesh, menu);
+
             if (camRigPrefab == null) Debug.LogError(@"Camera rig reference not found on ""DesktopSculptor""");
             camRig = Instantiate(camRigPrefab);
+
+            var coll = MeshWrapper.MeshTransform.gameObject.AddComponent<SphereCollider>();
+            coll.radius = MeshWrapper.radius;
         }
 
         protected override SculptState GetState(SculptState prev)
