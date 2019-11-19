@@ -7,6 +7,9 @@ namespace VRSculpting.UI.AppMenu
     [RequireComponent(typeof(Image))]
     public class Button : MonoBehaviour
     {
+        private static Color standardColor = new Color(.85f, .85f, .85f);
+        private static Color enabledColor = new Color(.65f, .85f, .65f);
+        private static float hoverColorInfl = .95f;
 
         public string label;
 
@@ -14,6 +17,8 @@ namespace VRSculpting.UI.AppMenu
 
         public delegate void OnClickHandler();
         public event OnClickHandler OnClick;
+
+        private Color baseColor;
 
         public void Click()
         {
@@ -23,14 +28,30 @@ namespace VRSculpting.UI.AppMenu
         private bool hover;
         public bool Hover
         {
+            get { return hover; }
             set
             {
                 if (hover == value) return;
                 hover = value;
-                GetComponent<Image>().color = value
-                    ? new Color(.85f, .85f, .85f)
-                    : new Color(.9f, .9f, .9f);
+                UpdateColor();
             }
+        }
+
+        private new bool enabled;
+        public bool Enabled
+        {
+            set
+            {
+                if (value == enabled) return;
+                enabled = value;
+                baseColor = value ? enabledColor : standardColor;
+                UpdateColor();
+            }
+        }
+
+        private void UpdateColor()
+        {
+            GetComponent<Image>().color = Hover ? baseColor : hoverColorInfl * baseColor;
         }
 
         private void Awake()
@@ -46,6 +67,9 @@ namespace VRSculpting.UI.AppMenu
 
             Hover = true;
             Hover = false;
+
+            baseColor = standardColor;
+            UpdateColor();
         }
 
     }
