@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Generic;
 
-namespace VRSculpting.Tools
+namespace VRSculpting.Sculptor
 {
     using SculptMesh.Modification;
-    using Settings;
+    using Tools;
 
     public class ToolCollection : ReadOnlyDictionary<ToolType, Tool>
     {
