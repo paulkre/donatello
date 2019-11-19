@@ -11,11 +11,12 @@ namespace VRSculpting.Sculptor
 
     public abstract class SculptorBehaviour : MonoBehaviour
     {
+        private bool symmetry = true;
 
-        [SerializeField]
         public List<UI.UI> uiComponents;
 
-        private ToolCollection mainColl;
+        private ToolCollection tools;
+        private ToolCollection mirrorTools;
 
         private SculptState currentState;
         private Stack<SculptState> stateStack;
@@ -24,6 +25,7 @@ namespace VRSculpting.Sculptor
         protected MeshWrapperBehaviour MeshWrapper { get; private set; }
 
         private Deformer deformer;
+        private Deformer mirrorDeformer;
 
         private bool running;
 
@@ -34,8 +36,10 @@ namespace VRSculpting.Sculptor
             Menu = menu;
 
             deformer = new Deformer(sculptMesh);
+            mirrorDeformer = new Deformer(sculptMesh);
 
-            mainColl = new ToolCollection(sculptMesh, deformer);
+            tools = new ToolCollection(sculptMesh);
+            mirrorTools = new ToolCollection(sculptMesh);
 
             uiComponents.ForEach(ui => ui.Init(Menu));
 
@@ -74,9 +78,24 @@ namespace VRSculpting.Sculptor
             if (state.menuState.appMenuEnabled) return;
 
             if (state.drawing)
-                mainColl[state.menuState.tool].Use(state);
+            {
+                tools[state.menuState.tool].Use(state, deformer);
+                if (symmetry)
+                {
+                    var p = state.position;
+                    p = state.worldToLocal.MultiplyPoint(p);
+                    p.x *= -1;
+                    p = state.worldToLocal.inverse.MultiplyPoint(p);
+                    state.position = p;
+
+                    mirrorTools[state.menuState.tool].Use(state, mirrorDeformer);
+                }
+            }
             else if (state.drawingUp)
+            {
                 deformer.Unmask();
+                mirrorDeformer.Unmask();
+            }
 
             MeshWrapper.SculptMesh.ApplyDeformation();
         }

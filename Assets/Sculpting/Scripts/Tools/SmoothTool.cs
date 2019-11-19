@@ -12,15 +12,10 @@ namespace VRSculpting.Tools
 
         private static float strength = .05f;
 
-        public SmoothTool(
-            SculptMesh mesh,
-            Deformer deformer
-        ) : base(ToolType.Smooth, mesh, deformer) { }
+        public SmoothTool(SculptMesh mesh) : base(ToolType.Smooth, mesh) { }
 
-        public override void Use(SculptState state)
+        public override void Use(SculptState state, Deformer deformer)
         {
-            var deformer = Deformer;
-
             deformer.UpdateMask(state);
 
             var mask = deformer.Selection;

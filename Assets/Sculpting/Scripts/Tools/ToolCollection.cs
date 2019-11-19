@@ -9,11 +9,11 @@ namespace VRSculpting.Tools
     public class ToolCollection : ReadOnlyDictionary<ToolType, Tool>
     {
 
-        public ToolCollection(SculptMesh sculptMesh, Deformer deformer) : base(
+        public ToolCollection(SculptMesh sculptMesh) : base(
             new Dictionary<ToolType, Tool> {
-                { ToolType.Standard,  new StandardTool(sculptMesh, deformer)},
-                { ToolType.Move,  new MoveTool(sculptMesh, deformer)},
-                { ToolType.Smooth,  new SmoothTool(sculptMesh, deformer)},
+                { ToolType.Standard,  new StandardTool(sculptMesh)},
+                { ToolType.Move,  new MoveTool(sculptMesh)},
+                { ToolType.Smooth,  new SmoothTool(sculptMesh)},
             }
         )
         { }

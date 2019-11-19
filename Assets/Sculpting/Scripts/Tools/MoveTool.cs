@@ -11,18 +11,13 @@ namespace VRSculpting.Tools
 
         private Vector3 prevPosition;
 
-        public MoveTool(
-            SculptMesh mesh,
-            Deformer deformer
-        ) : base(ToolType.Move, mesh, deformer)
+        public MoveTool(SculptMesh mesh) : base(ToolType.Move, mesh)
         {
             prevPosition = Vector3.zero;
         }
 
-        public override void Use(SculptState state)
+        public override void Use(SculptState state, Deformer deformer)
         {
-            var deformer = Deformer;
-
             if (state.drawingDown)
             {
                 deformer.UpdateMask(state);

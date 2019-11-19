@@ -11,15 +11,10 @@ namespace VRSculpting.Tools
 
         private static float strength = .001f;
 
-        public StandardTool(
-            SculptMesh mesh,
-            Deformer deformer
-        ) : base(ToolType.Standard, mesh, deformer) { }
+        public StandardTool(SculptMesh mesh) : base(ToolType.Standard, mesh) { }
 
-        public override void Use(SculptState state)
+        public override void Use(SculptState state, Deformer deformer)
         {
-            var deformer = Deformer;
-
             deformer.UpdateMask(state);
 
             var mask = deformer.Selection;
