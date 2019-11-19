@@ -11,28 +11,23 @@ namespace VRSculpting.Tools
 
         private static float strength = .001f;
 
-        public StandardTool(
-            SculptMesh mesh,
-            Deformer deformer
-        ) : base(ToolType.Standard, mesh, deformer) { }
+        public StandardTool(SculptMesh mesh) : base(ToolType.Standard, mesh) { }
 
-        public override void Use(SculptState state)
+        public override void Use(SculptState state, Deformer deformer)
         {
-            var deformer = Deformer;
-
             deformer.UpdateMask(state);
 
-            var mask = deformer.Mask;
+            var mask = deformer.Selection;
             var deformation = deformer.Deformation;
 
             Vector3 avgNormal = Vector3.zero;
-            for (int i = 0; i < deformer.MaskCount; i++)
+            for (int i = 0; i < deformer.SelectionCount; i++)
                 avgNormal += SculptMesh.Normals[mask[i]];
             avgNormal.Normalize();
 
             float amp = strength * state.strength;
             float inv = state.drawingInverted ? -1f : 1f;
-            for (int i = 0; i < deformer.MaskCount; ++i)
+            for (int i = 0; i < deformer.SelectionCount; ++i)
                 deformation[i] = amp * inv * avgNormal;
 
             deformer.ApplyDeformation();

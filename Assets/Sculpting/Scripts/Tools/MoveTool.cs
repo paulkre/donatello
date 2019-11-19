@@ -11,30 +11,25 @@ namespace VRSculpting.Tools
 
         private Vector3 prevPosition;
 
-        public MoveTool(
-            SculptMesh mesh,
-            Deformer deformer
-        ) : base(ToolType.Move, mesh, deformer)
+        public MoveTool(SculptMesh mesh) : base(ToolType.Move, mesh)
         {
             prevPosition = Vector3.zero;
         }
 
-        public override void Use(SculptState state)
+        public override void Use(SculptState state, Deformer deformer)
         {
-            var deformer = Deformer;
-
             if (state.drawingDown)
             {
                 deformer.UpdateMask(state);
                 prevPosition = state.position;
             }
 
-            if (deformer.MaskCount == 0) return;
+            if (deformer.SelectionCount == 0) return;
 
             var delta = state.worldToLocal * state.position - state.worldToLocal * prevPosition;
 
             var deformation = deformer.Deformation;
-            for (int i = 0; i < deformer.MaskCount; ++i)
+            for (int i = 0; i < deformer.SelectionCount; ++i)
                 deformation[i] = delta;
 
             prevPosition = state.position;

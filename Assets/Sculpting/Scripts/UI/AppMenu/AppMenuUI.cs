@@ -12,6 +12,7 @@ namespace VRSculpting.UI.AppMenu
         public Transform rightController;
 
         public Button exportButtonReference;
+        public Button symmetryButtonReference;
 
         public Pointer pointerPrefab;
 
@@ -38,6 +39,11 @@ namespace VRSculpting.UI.AppMenu
             Enabled = menu.AppMenuEnabled.Value;
 
             exportButtonReference.OnClick += menu.ExportAction.Do;
+            symmetryButtonReference.OnClick += () =>
+            {
+                menu.SymmetryEnabled.Toggle();
+                symmetryButtonReference.Enabled = menu.SymmetryEnabled.Value;
+            };
 
             menu.AppMenuEnabled.OnChange += (value) =>
             {
@@ -76,9 +82,14 @@ namespace VRSculpting.UI.AppMenu
             if (intersected)
             {
                 pointer.Length = Vector3.Distance(trm.position, hit.point);
-                activeButton = hit.collider.GetComponent<Button>();
-                if (activeButton != null)
-                    activeButton.Hover = true;
+                var btn = hit.collider.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.Hover = true;
+                    if (btn != activeButton && activeButton != null)
+                        activeButton.Hover = false;
+                    activeButton = btn;
+                }
             }
             else
             {

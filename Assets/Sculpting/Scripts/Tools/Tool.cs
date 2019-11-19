@@ -11,15 +11,12 @@
 
         protected SculptMesh SculptMesh { get; private set; }
 
-        protected Deformer Deformer { get; private set; }
-
-        public Tool(ToolType type, SculptMesh sculptMesh, Deformer deformer)
+        public Tool(ToolType type, SculptMesh sculptMesh)
         {
             Type = type;
             SculptMesh = sculptMesh;
-            Deformer = deformer;
         }
 
-        public abstract void Use(SculptState state);
+        public abstract void Use(SculptState state, Deformer deformer);
     }
 }

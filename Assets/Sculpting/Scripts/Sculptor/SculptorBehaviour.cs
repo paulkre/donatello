@@ -11,11 +11,10 @@ namespace VRSculpting.Sculptor
 
     public abstract class SculptorBehaviour : MonoBehaviour
     {
-
-        [SerializeField]
         public List<UI.UI> uiComponents;
 
-        private ToolCollection mainColl;
+        private ToolCollection tools;
+        private ToolCollection mirrorTools;
 
         private SculptState currentState;
         private Stack<SculptState> stateStack;
@@ -24,6 +23,7 @@ namespace VRSculpting.Sculptor
         protected MeshWrapperBehaviour MeshWrapper { get; private set; }
 
         private Deformer deformer;
+        private Deformer mirrorDeformer;
 
         private bool running;
 
@@ -34,8 +34,10 @@ namespace VRSculpting.Sculptor
             Menu = menu;
 
             deformer = new Deformer(sculptMesh);
+            mirrorDeformer = new Deformer(sculptMesh);
 
-            mainColl = new ToolCollection(sculptMesh, deformer);
+            tools = new ToolCollection(sculptMesh);
+            mirrorTools = new ToolCollection(sculptMesh);
 
             uiComponents.ForEach(ui => ui.Init(Menu));
 
@@ -59,6 +61,9 @@ namespace VRSculpting.Sculptor
             mat.SetFloat($"_BrushHardness", Menu.ToolHardness.Value);
             mat.SetFloat($"_MenuEnabled", Menu.AppMenuEnabled.Value ? 1 : 0);
 
+            mat.SetFloat($"_SymmetryEnabled", Menu.SymmetryEnabled.Value ? 1 : 0);
+            mat.SetVector($"_BrushPosMirrored", GetMirroredPosition(currentState));
+
             stateStack.Push(currentState);
         }
 
@@ -74,11 +79,29 @@ namespace VRSculpting.Sculptor
             if (state.menuState.appMenuEnabled) return;
 
             if (state.drawing)
-                mainColl[state.menuState.tool].Use(state);
+            {
+                tools[state.menuState.tool].Use(state, deformer);
+                if (state.menuState.symmetryEnabled)
+                {
+                    state.position = GetMirroredPosition(state);
+                    mirrorTools[state.menuState.tool].Use(state, mirrorDeformer);
+                }
+            }
             else if (state.drawingUp)
+            {
                 deformer.Unmask();
+                mirrorDeformer.Unmask();
+            }
 
             MeshWrapper.SculptMesh.ApplyDeformation();
+        }
+
+        private static Vector3 GetMirroredPosition(SculptState state)
+        {
+            var p = state.position;
+            p = state.worldToLocal.MultiplyPoint(p);
+            p.x *= -1;
+            return state.worldToLocal.inverse.MultiplyPoint(p);
         }
 
         protected abstract SculptState GetState(SculptState prev);

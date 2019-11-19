@@ -8,6 +8,7 @@
         public float toolSize;
         public float toolHardness;
         public bool appMenuEnabled;
+        public bool symmetryEnabled;
     }
 
 }
