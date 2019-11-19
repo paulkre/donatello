@@ -63,6 +63,12 @@ namespace VRSculpting.Sculptor
             mat.SetFloat($"_BrushHardness", Menu.ToolHardness.Value);
             mat.SetFloat($"_MenuEnabled", Menu.AppMenuEnabled.Value ? 1 : 0);
 
+            if (symmetry)
+            {
+                mat.SetFloat($"_SymmetryEnabled", symmetry ? 1 : 0);
+                mat.SetVector($"_BrushPosMirrored", GetMirroredPosition(currentState));
+            }
+
             stateStack.Push(currentState);
         }
 
@@ -82,12 +88,7 @@ namespace VRSculpting.Sculptor
                 tools[state.menuState.tool].Use(state, deformer);
                 if (symmetry)
                 {
-                    var p = state.position;
-                    p = state.worldToLocal.MultiplyPoint(p);
-                    p.x *= -1;
-                    p = state.worldToLocal.inverse.MultiplyPoint(p);
-                    state.position = p;
-
+                    state.position = GetMirroredPosition(state);
                     mirrorTools[state.menuState.tool].Use(state, mirrorDeformer);
                 }
             }
@@ -98,6 +99,14 @@ namespace VRSculpting.Sculptor
             }
 
             MeshWrapper.SculptMesh.ApplyDeformation();
+        }
+
+        private static Vector3 GetMirroredPosition(SculptState state)
+        {
+            var p = state.position;
+            p = state.worldToLocal.MultiplyPoint(p);
+            p.x *= -1;
+            return state.worldToLocal.inverse.MultiplyPoint(p);
         }
 
         protected abstract SculptState GetState(SculptState prev);
