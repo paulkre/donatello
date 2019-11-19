@@ -5,11 +5,13 @@ namespace VRSculpting.SculptMesh
 
     public class MeshWrapperBehaviour : MonoBehaviour
     {
+        public SculptMeshBehaviour sculptMeshReference;
+
+        public int subdivisionLevel = 6;
+
+        public float radius = .5f;
 
         private bool initialized = false;
-
-        [SerializeField]
-        public SculptMeshBehaviour sculptMeshReference;
 
         public Modification.SculptMesh SculptMesh { get; private set; }
 
@@ -17,7 +19,7 @@ namespace VRSculpting.SculptMesh
 
         public Transform MeshTransform { get { return sculptMeshReference.transform; } }
 
-        public void Init(int subdivisionLevel = 6, float radius = .5f)
+        public void Awake()
         {
             if (sculptMeshReference == null || initialized) return;
 
