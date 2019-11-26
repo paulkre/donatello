@@ -125,7 +125,7 @@ MonoBehaviour:
   cameraParentPos: {fileID: 2501006613428073250}
   cameraParentRot: {fileID: 2501006613119897096}
   smoothing: 0.999
-  hmdOffset: {x: 0, y: 0, z: 0}
+  hmdOffset: {x: 0.07, y: -0.05, z: -0.15}
   vrCamera: {fileID: 2501006614092844709}
 --- !u!1 &2501006613484414535
 GameObject:
