@@ -6,11 +6,7 @@ namespace VRSculpting.Sculptor.Odyssey
 
     public class OdysseySculptor : SculptorBehaviour
     {
-
-        [SerializeField]
         public Transform leftController;
-
-        [SerializeField]
         public Transform rightController;
 
         private static Vector3 effectPointOffset = new Vector3(.015f, -.05f, .12f);
@@ -78,8 +74,8 @@ namespace VRSculpting.Sculptor.Odyssey
 
         private static void UpdateControllerTransforms(Transform controller, XRNode node)
         {
-            controller.position = InputTracking.GetLocalPosition(node);
-            controller.rotation = InputTracking.GetLocalRotation(node);
+            controller.localPosition = InputTracking.GetLocalPosition(node);
+            controller.localRotation = InputTracking.GetLocalRotation(node);
         }
 
     }
