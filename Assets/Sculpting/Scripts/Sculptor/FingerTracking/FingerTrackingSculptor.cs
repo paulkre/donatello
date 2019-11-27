@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-using FingerTracking;
+﻿using FingerTracking;
 using FingerTracking.UI.Picker;
 using FingerTracking.UI.FingerSlider;
 using FingerTracking.UI.Grip;
@@ -14,6 +12,8 @@ namespace VRSculpting.Sculptor.FingerTracking
     {
         public TrackedHand rightHand;
         public TrackedHand leftHand;
+
+        public UI.FingerSphere.FingerSphereUI fingerSphere;
 
         public PickerBehaviour pickerPrefab;
         public FingerSliderBehaviour sliderPrefab;
@@ -33,17 +33,19 @@ namespace VRSculpting.Sculptor.FingerTracking
         {
             base.Init(sculptMesh, menu);
 
+            fingerSphere.hand = rightHand;
+
             picker = Instantiate(pickerPrefab, transform);
             picker.hand = rightHand;
 
             slider = Instantiate(sliderPrefab, transform);
             slider.hand = rightHand;
 
-            multiPicker = Instantiate(multiPickerPrefab, transform);
-            multiPicker.hand = leftHand;
-
             rightGrip = Instantiate(gripPrefab, transform);
             rightGrip.hand = rightHand;
+
+            multiPicker = Instantiate(multiPickerPrefab, transform);
+            multiPicker.hand = leftHand;
 
             leftGrip = Instantiate(gripPrefab, transform);
             leftGrip.hand = leftHand;
@@ -74,12 +76,12 @@ namespace VRSculpting.Sculptor.FingerTracking
 
             return new SculptState
             {
-                position = picker.Point,
+                position = fingerSphere.Point,
                 strength = 1f,
 
-                drawing = !isTransforming && picker.State,
-                drawingDown = !isTransforming && picker.StateDown,
-                drawingUp = picker.StateUp,
+                drawing = !isTransforming && multiPicker.State,
+                drawingDown = !isTransforming && multiPicker.StateDown,
+                drawingUp = multiPicker.StateUp,
                 drawingInverted = false,
             };
         }
