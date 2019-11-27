@@ -161,7 +161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4093636266800628, guid: 83c9b9c90a4840b4f97e194bff492539, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4093636266800628, guid: 83c9b9c90a4840b4f97e194bff492539, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -364,7 +364,7 @@ PrefabInstance:
     - target: {fileID: 777659659683740124, guid: 66476c68b7c233f4f8a680b9191ab278,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 777659659683740124, guid: 66476c68b7c233f4f8a680b9191ab278,
         type: 3}
@@ -455,7 +455,7 @@ PrefabInstance:
     - target: {fileID: 3180104620119745098, guid: a0474bed17c1f944e9975c3bac27fcda,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3180104620119745098, guid: a0474bed17c1f944e9975c3bac27fcda,
         type: 3}
@@ -561,7 +561,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4739203805424280, guid: a0636574939ca514bae1c37d5541edaa, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4739203805424280, guid: a0636574939ca514bae1c37d5541edaa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -664,6 +664,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: FingerTrackingSculptor
       objectReference: {fileID: 0}
+    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
+        type: 3}
+      propertyPath: uiComponents.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
+        type: 3}
+      propertyPath: rightHand
+      value: 
+      objectReference: {fileID: 1474646300}
+    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
+        type: 3}
+      propertyPath: leftHand
+      value: 
+      objectReference: {fileID: 69660127}
+    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
+        type: 3}
+      propertyPath: uiComponents.Array.data[1]
+      value: 
+      objectReference: {fileID: 230537621}
     - target: {fileID: 6960367316615758329, guid: 65365f37de28cf84a9e5e89f423e2e9d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -702,7 +722,7 @@ PrefabInstance:
     - target: {fileID: 6960367316615758329, guid: 65365f37de28cf84a9e5e89f423e2e9d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6960367316615758329, guid: 65365f37de28cf84a9e5e89f423e2e9d,
         type: 3}
@@ -719,20 +739,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
-        type: 3}
-      propertyPath: uiComponents.Array.data[0]
-      value: 
-      objectReference: {fileID: 230537621}
-    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
-        type: 3}
-      propertyPath: rightHand
-      value: 
-      objectReference: {fileID: 1474646300}
-    - target: {fileID: 6960367316615758328, guid: 65365f37de28cf84a9e5e89f423e2e9d,
-        type: 3}
-      propertyPath: leftHand
-      value: 
-      objectReference: {fileID: 69660127}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65365f37de28cf84a9e5e89f423e2e9d, type: 3}
