@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FingerTracking.UI.Picker
+namespace FingerTracking.UI.Grip
 {
 
-    public class PickerBehaviour : MonoBehaviour
+    public class GripBehaviour : MonoBehaviour
     {
         public float threshold = .02f;
 
         public TrackedHand hand;
-
-        [Range(1, 3)]
-        public int finger = 1;
 
         public delegate void Handler(Vector3 point, Vector3 delta);
 
@@ -43,13 +40,17 @@ namespace FingerTracking.UI.Picker
             timeStamp = Time.frameCount;
 
             Vector3 thumbTip = hand.GetWorldPosition(0, 3);
-            Vector3 fingerTip = hand.GetWorldPosition(finger, 3);
+            Vector3 indexTip = hand.GetWorldPosition(1, 3);
+            Vector3 middleTip = hand.GetWorldPosition(2, 3);
 
+            float mag0 = (indexTip - thumbTip).magnitude;
+            float mag1 = (middleTip - indexTip).magnitude;
+            float mag2 = (thumbTip - middleTip).magnitude;
 
             Vector3 lastPoint = point;
-            point = (thumbTip + fingerTip) / 2;
+            point = (thumbTip + indexTip + middleTip) / 3;
             delta = point - lastPoint;
-            state = Vector3.Distance(thumbTip, fingerTip) <= threshold;
+            state = mag0 <= threshold && mag1 <= threshold && mag2 <= threshold;
             stateDown = !lastState && state;
             stateUp = lastState && !state;
 
@@ -61,4 +62,3 @@ namespace FingerTracking.UI.Picker
     }
 
 }
-

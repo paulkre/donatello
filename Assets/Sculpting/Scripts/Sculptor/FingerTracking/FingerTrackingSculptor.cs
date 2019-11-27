@@ -1,11 +1,13 @@
-﻿using FingerTracking;
+﻿using UnityEngine;
+
+using FingerTracking;
 using FingerTracking.UI.Picker;
 using FingerTracking.UI.FingerSlider;
-using VRSculpting.SculptMesh.Modification;
-using VRSculpting.Settings;
+using FingerTracking.UI.Grip;
 
 namespace VRSculpting.Sculptor.FingerTracking
 {
+    using Settings;
     using Tools;
 
     public class FingerTrackingSculptor : SculptorBehaviour
@@ -16,10 +18,16 @@ namespace VRSculpting.Sculptor.FingerTracking
         public PickerBehaviour pickerPrefab;
         public FingerSliderBehaviour sliderPrefab;
         public MultiPickerBehaviour multiPickerPrefab;
+        public GripBehaviour gripPrefab;
 
         private PickerBehaviour picker;
         private FingerSliderBehaviour slider;
         private MultiPickerBehaviour multiPicker;
+
+        private GripBehaviour rightGrip;
+        private GripBehaviour leftGrip;
+
+        private TransformInputManager transformInputManager;
 
         public override void Init(SculptMesh.Modification.SculptMesh sculptMesh, Menu menu)
         {
@@ -34,22 +42,43 @@ namespace VRSculpting.Sculptor.FingerTracking
             multiPicker = Instantiate(multiPickerPrefab, transform);
             multiPicker.hand = leftHand;
 
+            rightGrip = Instantiate(gripPrefab, transform);
+            rightGrip.hand = rightHand;
+
+            leftGrip = Instantiate(gripPrefab, transform);
+            leftGrip.hand = leftHand;
+
             slider.OnChange += (value, lastValue) =>
                 menu.SelectedParameter.RelativeValue += value - lastValue;
 
             multiPicker.OnDown += fingerId =>
                 menu.CurrentTool = MapFingerIdToTool(fingerId);
+
+            transformInputManager = new TransformInputManager(sculptMesh.Wrapper);
         }
 
         protected override SculptState GetState(SculptState prev)
         {
+            transformInputManager.ManageInput(
+                rightGrip.Point,
+                leftGrip.Point,
+                rightGrip.State,
+                leftGrip.State,
+                rightGrip.StateDown,
+                leftGrip.StateDown,
+                rightGrip.StateUp,
+                leftGrip.StateUp
+            );
+
+            bool isTransforming = rightGrip.State || leftGrip.State;
+
             return new SculptState
             {
-                position = rightHand.transform.position,
+                position = picker.Point,
                 strength = 1f,
 
-                drawing = picker.State,
-                drawingDown = picker.StateDown,
+                drawing = !isTransforming && picker.State,
+                drawingDown = !isTransforming && picker.StateDown,
                 drawingUp = picker.StateUp,
                 drawingInverted = false,
             };

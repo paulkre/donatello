@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6960367316615758335
+--- !u!1 &1791729800278405955
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6960367316615758329}
-  - component: {fileID: 6960367316615758328}
+  - component: {fileID: 1791729800278405953}
+  - component: {fileID: 1791729800278405954}
   m_Layer: 0
-  m_Name: FingerTrackingSculptor
+  m_Name: Grip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6960367316615758329
+--- !u!4 &1791729800278405953
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6960367316615758335}
+  m_GameObject: {fileID: 1791729800278405955}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,27 +31,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6960367316615758328
+--- !u!114 &1791729800278405954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6960367316615758335}
+  m_GameObject: {fileID: 1791729800278405955}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecc3979eae116724ba8d805308b23c98, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ada9b71177df5f459b42e12d8797ff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiComponents:
-  - {fileID: 0}
-  rightHand: {fileID: 0}
-  leftHand: {fileID: 0}
-  pickerPrefab: {fileID: 349388203786361231, guid: 17754da015e87444f8a029c3ba588871,
-    type: 3}
-  sliderPrefab: {fileID: 3918876011056500327, guid: 106fe92a32f34bf49bd14ffd469e9a7a,
-    type: 3}
-  multiPickerPrefab: {fileID: 6897438722884063685, guid: 24eadac92d8ed114aba7f0f2ff2ab192,
-    type: 3}
-  gripPrefab: {fileID: 1791729800278405954, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-    type: 3}
+  threshold: 0.02
+  hand: {fileID: 0}

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-namespace FingerTracking.UI.Picker
+namespace FingerTracking.UI.Grip
 {
 
     public class ExampleListener : MonoBehaviour
     {
-        public PickerBehaviour picker;
+        public GripBehaviour grip;
 
         private Vector3 lastHandPosition;
 
@@ -13,13 +13,13 @@ namespace FingerTracking.UI.Picker
         {
             var rb = GetComponent<Rigidbody>();
 
-            picker.OnDown += (point, delta) =>
+            grip.OnDown += (point, delta) =>
             {
                 rb.isKinematic = true;
-                lastHandPosition = picker.hand.transform.position;
+                lastHandPosition = grip.hand.transform.position;
             };
 
-            picker.OnUp += (point, delta) =>
+            grip.OnUp += (point, delta) =>
             {
                 rb.isKinematic = false;
             };
@@ -27,12 +27,20 @@ namespace FingerTracking.UI.Picker
 
         private void Update()
         {
-            if (picker.State)
+            if (grip.State)
             {
-                var handTransform = picker.hand.transform;
+                var handTransform = grip.hand.transform;
                 transform.position += handTransform.position - lastHandPosition;
                 lastHandPosition = handTransform.position;
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (grip == null) return;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(grip.Point, .01f);
         }
     }
 

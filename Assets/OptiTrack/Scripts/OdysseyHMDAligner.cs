@@ -45,7 +45,7 @@ public class OdysseyHMDAligner : MonoBehaviour
         cameraParentRot.transform.rotation = Quaternion.Lerp(cameraParentRot.transform.rotation, tRot, (1.0f - smoothing));
 
 
-        if (Vector3.Distance(cameraParentPos.transform.position,target) > 0.3f)
+        if (Vector3.Distance(cameraParentPos.transform.position,target) > 0.1f)
         {
             Debug.Log("too much, jump" + Vector3.Distance(cameraParentPos.transform.position, target));
             cameraParentPos.transform.position = target;
