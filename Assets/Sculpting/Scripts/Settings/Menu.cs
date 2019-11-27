@@ -22,7 +22,7 @@ namespace VRSculpting.Settings
             ExportAction = new Action();
             AppMenuEnabled = new Switch();
             DoAction = new Action();
-            SymmetryEnabled = new Switch();
+            SymmetryEnabled = new Switch(true);
         }
 
         public MenuState GetState()

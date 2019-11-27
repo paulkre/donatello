@@ -21,6 +21,11 @@
 
         public void Toggle() { Value = !value; }
 
+        public Switch(bool value = false)
+        {
+            this.value = value;
+        }
+
     }
 
 }
