@@ -39,6 +39,7 @@ namespace VRSculpting.Sculptor.FingerTracking
 
             picker = Instantiate(pickerPrefab, transform);
             picker.hand = rightHand;
+            picker.finger = 4;
 
             slider = Instantiate(sliderPrefab, transform);
             slider.hand = rightHand;
@@ -57,6 +58,8 @@ namespace VRSculpting.Sculptor.FingerTracking
 
             multiPicker.OnDown += fingerId =>
                 menu.CurrentTool = MapFingerIdToTool(fingerId);
+
+            picker.OnDown += (point, delta) => menu.AppMenuEnabled.Toggle();
 
             transformInputManager = new TransformInputManager(sculptMesh.Wrapper);
         }
