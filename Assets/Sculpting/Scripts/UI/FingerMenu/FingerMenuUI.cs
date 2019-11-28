@@ -12,8 +12,10 @@ namespace VRSculpting.UI.FingerMenu
         public TrackedHand hand;
 
         public Transform pointer;
-        public Button symmetryButton;
         public Canvas canvas;
+
+        public Button symmetryButton;
+        public Button exportButton;
 
         private void SetEnabled(bool value)
         {
@@ -30,6 +32,9 @@ namespace VRSculpting.UI.FingerMenu
             menu.SymmetryEnabled.OnChange += value => symmetryButton.Enabled = value;
             symmetryButton.Enabled = menu.SymmetryEnabled.Value;
             symmetryButton.OnClick += () => menu.SymmetryEnabled.Toggle();
+
+            exportButton.Init();
+            exportButton.OnClick += () => menu.ExportAction.Do();
         }
 
         private void Update()
