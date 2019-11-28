@@ -14,6 +14,7 @@ namespace VRSculpting.Sculptor.FingerTracking
         public TrackedHand leftHand;
 
         public UI.FingerSphere.FingerSphereUI fingerSphere;
+        public UI.FingerMenu.FingerMenuUI fingerMenu;
 
         public PickerBehaviour pickerPrefab;
         public FingerSliderBehaviour sliderPrefab;
@@ -34,6 +35,7 @@ namespace VRSculpting.Sculptor.FingerTracking
             base.Init(sculptMesh, menu);
 
             fingerSphere.hand = rightHand;
+            fingerMenu.hand = rightHand;
 
             picker = Instantiate(pickerPrefab, transform);
             picker.hand = rightHand;
