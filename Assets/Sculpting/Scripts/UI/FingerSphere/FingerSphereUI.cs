@@ -8,6 +8,9 @@ namespace VRSculpting.UI.FingerSphere
 
     public class FingerSphereUI : UI
     {
+        const float overshootThreshold = .04f;
+        const float overshootCoef = 85f;
+
         public FingerTracking.TrackedHand hand;
 
         private Vector3[] fingerTips;
@@ -44,6 +47,12 @@ namespace VRSculpting.UI.FingerSphere
             for (int i = 0; i < fingerTips.Length; i++)
                 radius += Vector3.Distance(mid, fingerTips[i]);
             radius /= fingerTips.Length;
+
+            if (radius > overshootThreshold)
+            {
+                float overshoot = radius - overshootThreshold;
+                radius += overshootCoef * overshoot * overshoot;
+            }
 
             transform.localPosition = Point = mid;
             transform.localScale = 2 * radius * Vector3.one;
