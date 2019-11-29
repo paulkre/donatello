@@ -8,10 +8,11 @@ namespace VRSculpting
 
     public class SculptManager : MonoBehaviour
     {
-        
         public SculptorBehaviour[] sculptors;
 
         public MeshWrapperBehaviour meshWrapper;
+
+        public Transform dome;
 
         public static int FrameCount { get; private set; }
 
@@ -37,6 +38,7 @@ namespace VRSculpting
         {
             FrameCount = Time.frameCount;
             meshWrapper.SculptMesh.UpdateMeshData();
+            dome.position = Camera.main.transform.position;
         }
 
     }
