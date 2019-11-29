@@ -11,9 +11,12 @@ namespace VRSculpting.UI.FingerToolSelection
 
         public int FingerId { get; private set; }
 
-        public void Init(OptionProps props, float size)
+        public void Init(OptionProps props, float size, Color color)
         {
-            quad.material.mainTexture = props.icon;
+            var mat = quad.material;
+            mat.mainTexture = props.icon;
+            mat.SetColor("_Color", color);
+
             quad.transform.localScale = size * Vector3.one;
             quad.transform.localPosition = size * Vector3.forward;
 

@@ -9,6 +9,13 @@ namespace VRSculpting.UI.FingerToolSelection
     public class FingerToolSelectionUI : UI
     {
         private static float optionSize = .04f;
+        private static Dictionary<int, Color> colors = new Dictionary<int, Color>
+        {
+            {1, Color.yellow },
+            {2, Color.green },
+            {3, Color.blue },
+            {4, Color.magenta }
+        };
 
         public FingerTracking.TrackedHand hand;
 
@@ -23,7 +30,7 @@ namespace VRSculpting.UI.FingerToolSelection
             foreach (var option in options)
             {
                 option.transform.position = hand.GetWorldPosition(option.FingerId, 3);
-                option.transform.localRotation = Quaternion.LookRotation(hand.transform.up, Vector3.up);
+                option.transform.localRotation = Quaternion.LookRotation(hand.transform.forward, Vector3.up);
                 option.ManualUpdate();
             }
         }
@@ -51,7 +58,8 @@ namespace VRSculpting.UI.FingerToolSelection
             for (int i = 0; i < optionProps.Count; i++)
             {
                 var option = Instantiate(optionPrefab, transform, false);
-                option.Init(optionProps[i], optionSize);
+                var props = optionProps[i];
+                option.Init(props, optionSize, colors[props.fingerId]);
 
                 options[i] = option;
             }
