@@ -38,6 +38,8 @@ namespace VRSculpting.UI.FingerMenu
 
         private State state;
 
+        private bool initialized;
+
         public void Init()
         {
             var coll = GetComponent<BoxCollider>();
@@ -59,10 +61,14 @@ namespace VRSculpting.UI.FingerMenu
             background = plate.GetComponent<UnityEngine.UI.Image>();
 
             UpdateBgColor();
+
+            initialized = true;
         }
 
         private void FixedUpdate()
         {
+            if (!initialized) return;
+
             pressForce += (pressForceGoal - pressForce) / 2;
             plate.localPosition = Vector3.forward * pressForce;
             UpdateBgColor();
@@ -70,6 +76,8 @@ namespace VRSculpting.UI.FingerMenu
 
         private void OnTriggerStay(Collider other)
         {
+            if (!initialized) return;
+
             var pointer = other as SphereCollider;
             var point = pointer.transform.position;
             var plane = new Plane(transform.forward, transform.position);
@@ -88,6 +96,8 @@ namespace VRSculpting.UI.FingerMenu
 
         private void OnTriggerExit(Collider other)
         {
+            if (!initialized) return;
+
             pressForceGoal = 0f;
             state = State.None;
         }

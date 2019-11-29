@@ -17,6 +17,8 @@ namespace VRSculpting.UI.FingerMenu
         public Button symmetryButton;
         public Button exportButton;
 
+        private bool initialized;
+
         private void SetEnabled(bool value)
         {
             canvas.enabled = value;
@@ -35,10 +37,14 @@ namespace VRSculpting.UI.FingerMenu
 
             exportButton.Init();
             exportButton.OnClick += () => menu.ExportAction.Do();
+
+            initialized = true;
         }
 
         private void Update()
         {
+            if (!initialized) return;
+
             var cam = Camera.main.transform;
             var trm = canvas.transform;
             var targetPosition = cam.position + viewDistance * cam.forward;

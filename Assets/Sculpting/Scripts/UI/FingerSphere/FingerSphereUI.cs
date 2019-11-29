@@ -14,16 +14,22 @@ namespace VRSculpting.UI.FingerSphere
 
         private Menu menu;
 
+        private bool initialized;
+
         public Vector3 Point { get; private set; }
 
         public override void Init(Menu menu)
         {
             this.menu = menu;
             fingerTips = new Vector3[5];
+
+            initialized = true;
         }
 
         private void Update()
         {
+            if (!initialized) return;
+
             for (int i = 0; i < fingerTips.Length; i++)
                 fingerTips[i] = hand.GetWorldPosition(i, 3);
 
