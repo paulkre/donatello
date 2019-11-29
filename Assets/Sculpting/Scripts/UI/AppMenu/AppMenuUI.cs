@@ -39,11 +39,10 @@ namespace VRSculpting.UI.AppMenu
             Enabled = menu.AppMenuEnabled.Value;
 
             exportButtonReference.OnClick += menu.ExportAction.Do;
-            symmetryButtonReference.OnClick += () =>
-            {
-                menu.SymmetryEnabled.Toggle();
-                symmetryButtonReference.Enabled = menu.SymmetryEnabled.Value;
-            };
+
+            symmetryButtonReference.OnClick += () => menu.SymmetryEnabled.Toggle();
+            menu.SymmetryEnabled.OnChange += value => symmetryButtonReference.Enabled = value;
+            symmetryButtonReference.Enabled = menu.SymmetryEnabled.Value;
 
             menu.AppMenuEnabled.OnChange += (value) =>
             {
