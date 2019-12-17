@@ -12,6 +12,7 @@ namespace VRSculpting.Sculptor
         public ToolCollection(SculptMesh sculptMesh) : base(
             new Dictionary<ToolType, Tool> {
                 { ToolType.Standard,  new StandardTool(sculptMesh)},
+                { ToolType.Push,  new PushTool(sculptMesh)},
                 { ToolType.Move,  new MoveTool(sculptMesh)},
                 { ToolType.Smooth,  new SmoothTool(sculptMesh)},
             }

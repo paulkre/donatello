@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 958113c43a94d9e409ef0e7c55413586, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hand: {fileID: 0}
   optionPrefab: {fileID: 5716700486330242101, guid: 72705ca470fe7f64c859aab8255177e7,
     type: 3}
   optionProps:
@@ -50,11 +51,15 @@ MonoBehaviour:
     tool: 0
     icon: {fileID: 2800000, guid: 98bd85fe12fc97c49acbed251540b3ac, type: 3}
     fingerId: 1
+  - label: Push
+    tool: 3
+    icon: {fileID: 2800000, guid: d9d126b23141cd248a43f40f1e9e0916, type: 3}
+    fingerId: 2
   - label: Move
     tool: 1
     icon: {fileID: 2800000, guid: c813ae8a8426cda4a8a910a88fabd8cd, type: 3}
-    fingerId: 2
+    fingerId: 3
   - label: Smooth
     tool: 2
     icon: {fileID: 2800000, guid: 3b4415dbed28c9e4da98d06954c7a4ea, type: 3}
-    fingerId: 3
+    fingerId: 4

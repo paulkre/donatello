@@ -4,6 +4,7 @@
     {
         Standard,
         Move,
-        Smooth
+        Smooth,
+        Push,
     }
 }
