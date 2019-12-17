@@ -1,4 +1,6 @@
-﻿namespace FingerTracking
+﻿using UnityEngine;
+
+namespace FingerTracking
 {
 
     [System.Serializable]
@@ -10,7 +12,10 @@
 
         public int side;
         public float[,] segmentLengths = new float[5, 3];
-        public float[,] positions = new float[22, 3];
+        public float[,] jointPositions = new float[22, 3];
+        public float[,] calibrationPositions = new float[22, 3];
+
+
     }
 
 }

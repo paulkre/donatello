@@ -17,6 +17,8 @@ namespace FingerTracking.Calibration
 
         private long timeStamp;
 
+        public static Calibrator Instance;
+
         public Calibrator(MarkerAssigner markerAssigner, TrackedHand[] hands)
         {
             this.markerAssigner = markerAssigner;
@@ -24,10 +26,16 @@ namespace FingerTracking.Calibration
 
             markerPositions = new List<Vector3>(128);
             localPositions = new List<Vector3>(128);
+
+            Instance = this;
         }
 
         public IEnumerator Calibrate()
         {
+
+            foreach (var h in hands)
+                h.calibrated = false;
+
             var player = FingerTrackingMaster.Instance.AudioPlayer;
 
             WindowsVoice.Speak($"Kalibrierung gestartet!");
@@ -45,7 +53,7 @@ namespace FingerTracking.Calibration
                 yield return new WaitForSeconds(1.0f);
             }
 
-            CalibrateAllHands();
+            MarkerAssignToHandsComplete();
 
             player.PlaySound(AudioType.accept);
 
@@ -59,7 +67,7 @@ namespace FingerTracking.Calibration
             }
 
             foreach (var h in hands)
-                h.SetPose(1);
+                h.SavePose(1);
 
             player.PlaySound(AudioType.accept);
 
@@ -73,7 +81,7 @@ namespace FingerTracking.Calibration
             }
 
             foreach (var h in hands)
-                h.SetPose(2);
+                h.SavePose(2);
 
             player.PlaySound(AudioType.accept);
 
@@ -88,12 +96,18 @@ namespace FingerTracking.Calibration
 
             foreach (var h in hands)
             {
-                h.SetPose(3);
+                //save last pose (wide)
+                h.SavePose(3);
+
+                //do calculations (lengeth, positions, etc.)
+                MarkerAssignToHands(h);
                 h.CalculateMetasFromPoses();
-                CalibrateAllHands();
                 h.CalibrateLength();
                 h.SetCalibrationPose();
-                h.SetPose(0);
+
+                //h.SavePose(0);
+                
+                //define parents
                 h.DefineParents();
             }
 
@@ -106,15 +120,17 @@ namespace FingerTracking.Calibration
             foreach (var hand in hands) hand.Calibrated = true;
         }
 
-        private void CalibrateAllHands()
+        private void MarkerAssignToHandsComplete()
         {
             foreach (TrackedHand hand in hands)
             {
-                CalibrateHand(hand);
+                MarkerAssignToHands(hand);
             }
+
+            markerAssigner.TrackingEnabled = true;
         }
 
-        public void CalibrateHand(TrackedHand hand)
+        public void MarkerAssignToHands(TrackedHand hand)
         {
             LoadLocalMarkerPositions(hand);
 
@@ -171,7 +187,6 @@ namespace FingerTracking.Calibration
                 }
             }
 
-            markerAssigner.TrackingEnabled = true;
         }
 
         private void LoadLocalMarkerPositions(TrackedHand hand)
@@ -179,6 +194,7 @@ namespace FingerTracking.Calibration
             UpdateMarkerPositions();
 
             localPositions.Clear();
+
             foreach (var p in markerPositions)
             {
                 Vector3 localPosition = hand.TransformWorldToLocalSpace(p);

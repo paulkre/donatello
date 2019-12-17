@@ -19,7 +19,7 @@ namespace FingerTracking
 
         public AudioPlayer audioPlayerPrefab;
         public DebugView debugViewPrefab;
-        private DebugView debugView;
+        public DebugView debugView;
         
         public static FingerTrackingMaster Instance;
         public Calibrator Calibrator { get; private set; }
@@ -37,11 +37,6 @@ namespace FingerTracking
             AudioPlayer = Instantiate(audioPlayerPrefab);
             AudioPlayer.Init();
 
-            if (debugViewPrefab != null && showDebugView)
-            {                
-                debugView = Instantiate(debugViewPrefab);
-                debugView.Init();
-            }
 
             StreamingClient = GetComponent<OptitrackStreamingClient>();
             if (StreamingClient != null)
@@ -59,6 +54,12 @@ namespace FingerTracking
         void Update()
         {
             KeyControls();
+
+            if (debugView == null && debugViewPrefab != null && showDebugView )
+            {
+                debugView = Instantiate(debugViewPrefab);
+                debugView.Init();
+            }
         }
 
         public void RegisterHand(TrackedHand hand)

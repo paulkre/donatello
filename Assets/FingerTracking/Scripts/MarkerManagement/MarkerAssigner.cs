@@ -4,20 +4,40 @@ using UnityEngine;
 
 namespace FingerTracking.MarkerManagement
 {
-
     public class MarkerAssigner
     {
         const int SIZE = 512;
-        const float DISTANCE_THRESHOLD = 0.03f;
+        const float DISTANCE_THRESHOLD = 0.015f;
+        const float ANGLE_THRESHOLD = 10f;
 
         public bool TrackingEnabled { get; set; }
         public int Assigns { get; private set; }
+        
+        private bool ThreadRunning;
 
         private TrackedHand[] hands;
 
         private long timeStamp;
 
         private List<Vector3> markerPositions;
+
+        OptitrackMarker[] activeMarkers;
+        List<Match> matchList;
+
+        private bool[] markerTaken = new bool[SIZE];
+        private bool[] positionTaken = new bool[SIZE];
+
+        List<Vector3>[,] basePositionAnalysisPoints;
+
+        public bool processing = false;
+        object lockObj = new object();
+
+        public int debug_time_0_match, debug_time_1_assign, debug_time_2_assign;
+
+        private int[] debugTimings = new int[10];
+        System.Diagnostics.Stopwatch debugStopwatch = new System.Diagnostics.Stopwatch();
+
+
 
         public MarkerAssigner(TrackedHand[] hands)
         {
@@ -26,19 +46,18 @@ namespace FingerTracking.MarkerManagement
             matchList = new List<Match>(SIZE * SIZE);
             markerPositions = new List<Vector3>(256);
 
-            assigning = true;
+            ThreadRunning = true;
             new Thread(
                 new ThreadStart(AssignLoop)
             ).Start();
         }
 
-        private bool assigning;
 
         private void AssignLoop()
         {
             var streamingClient = FingerTrackingMaster.Instance.StreamingClient;
 
-            while (assigning)
+            while (ThreadRunning)
             {
                 if (TrackingEnabled)
                 {
@@ -47,7 +66,7 @@ namespace FingerTracking.MarkerManagement
                         timeStamp = streamingClient.TimeStamp;
 
                         streamingClient.ReadMarkerPositions(markerPositions);
-                        MatchPositionsWithMarkers();
+                        MarkerAssignPipeline();
                         Thread.Sleep(1);
 
                         Assigns++;
@@ -93,103 +112,188 @@ namespace FingerTracking.MarkerManagement
             }
         }
 
-
-        public int debug_time0, debug_time1;
-        System.Diagnostics.Stopwatch debugStopwatch = new System.Diagnostics.Stopwatch();
-
-        public void GetAssignTimings(ref int timing0, ref int timing1)
+        public void GetAssignTimings(ref int[] timings)
         {
-            timing0 = debug_time0;
-            timing1 = debug_time1;
+            for(int i = 0;i<10;i++)
+            {
+                timings[i] = debugTimings[i];
+            }
         }
 
-
-        OptitrackMarker[] activeMarkers;
-        List<Match> matchList;
-
-        private bool[] markerTaken = new bool[SIZE];
-        private bool[] positionTaken = new bool[SIZE];
-
-        public bool processing = false;
-        object lockObj = new object();
-
-        public void MatchPositionsWithMarkers()
+        public void MarkerAssignPipeline()
         {
-            debugStopwatch.Restart();
             processing = true;
             lock (lockObj)
             {
 
-                //Prepare
-                matchList.Clear();
+                debugStopwatch.Restart();
 
-                float minValue;
-                int minIndex;
+                //0 Prepare
+                PrepareMatchingAlgorithm();
+                debugTimings[0] = (int)debugStopwatch.ElapsedTicks;
+                debugStopwatch.Restart();
 
-                for (int j = 0; j < markerPositions.Count; j++)
-                {
-                    positionTaken[j] = false;
-                }
+                //1 first pass: assign marker for every hand
+                FindMatchesByDistance();
+                debugTimings[1] = (int)debugStopwatch.ElapsedTicks;
+                debugStopwatch.Restart();
 
-                // Do
-                //first pass assign marker for every hand
-                foreach (TrackedHand hand in hands)
-                {
-                    hand.UpdateWorldToLocalMatrix_OUT();
-                    activeMarkers = hand.GetMarkers();
+                //2 second pass: sort and assign by quality priority
+                AssignMarkersByQuality();
+                debugTimings[2] = (int)debugStopwatch.ElapsedTicks;
+                debugStopwatch.Restart();
 
-                    for (int i = 0; i < activeMarkers.Length; i++)
-                    {
-                        activeMarkers[i].assignedInLastFrame = false;
-                        markerTaken[i] = false;
-                    }
+                //3 third pass: check for plausibility
+                //CheckPlausibility();
+                debugTimings[3] = (int)debugStopwatch.ElapsedTicks;
+                debugStopwatch.Restart();
 
-                    int matches = 0;
+                //4 fourth pass: try to locate missing
 
-                    for (int j = 0; j < activeMarkers.Length; j++)
-                    {
-                        minValue = float.MaxValue;
-                        minIndex = -1;
+                //5 fifth pass: simulate missing
 
-                        for (int i = 0; i < markerPositions.Count; i++)
-                        {
-                            float v = activeMarkers[j].GetRatingForMatch(hand.TransformWorldToLocalSpace(markerPositions[i]));
-
-                            if (v / DISTANCE_THRESHOLD < 1f)
-                            {
-                                matches++;
-                                minValue = v;
-                                minIndex = i;
-
-                                matchList.Add(new Match(hand, activeMarkers[j], i, hand.TransformWorldToLocalSpace(markerPositions[i]), v));
-                            }
-                        }
-                    }
-                }
-
-                debug_time0 = (int)debugStopwatch.ElapsedTicks;
-                //second pass, sort and assign by quality priority
-                matchList.Sort((x, y) => x.quality.CompareTo(y.quality));
-
-                for (int i = 0; i < matchList.Count; i++)
-                {
-                    if (!matchList[i].marker.assignedInLastFrame)
-                    {
-                        if (!positionTaken[matchList[i].indexPosition])
-                        {
-                            matchList[i].marker.UpdatePosition(matchList[i].position, matchList[i].quality);
-
-                            matchList[i].marker.assignedInLastFrame = true;
-                            positionTaken[matchList[i].indexPosition] = true;
-                        }
-                    }
-                }
-
-                debug_time1 = (int)debugStopwatch.ElapsedTicks - debug_time0;
+                //6 sixth pass: finalize hands
 
             }
 
             processing = false;
+        }
+
+
+        void PrepareMatchingAlgorithm()
+        {
+            matchList.Clear();
+            for (int j = 0; j < markerPositions.Count; j++)
+            {
+                positionTaken[j] = false;
+            }
+        }
+
+        private void FindMatchesByDistance()
+        {
+            foreach (TrackedHand hand in hands)
+            {
+                hand.UpdateWorldToLocalMatrix_OUT();
+                activeMarkers = hand.GetMarkers();
+
+                for (int i = 0; i < activeMarkers.Length; i++)
+                {
+                    activeMarkers[i].assignedInLastFrame = false;
+                    markerTaken[i] = false;
+                }
+
+                int matches = 0;
+                for (int j = 0; j < activeMarkers.Length; j++)
+                {
+                    float minValue = float.MaxValue;
+                    int minIndex = -1;
+
+                    for (int i = 0; i < markerPositions.Count; i++)
+                    {
+                        float v = activeMarkers[j].GetRatingForMatch(hand.TransformWorldToLocalSpace(markerPositions[i]));
+
+                        if (v / DISTANCE_THRESHOLD < 1f)
+                        {
+                            matches++;
+                            minValue = v;
+                            minIndex = i;
+
+                            matchList.Add(new Match(hand, activeMarkers[j], i, hand.TransformWorldToLocalSpace(markerPositions[i]), v));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AssignMarkersByQuality()
+        {
+            matchList.Sort((x, y) => x.quality.CompareTo(y.quality));
+
+            for (int i = 0; i < matchList.Count; i++)
+            {
+                if (!matchList[i].marker.assignedInLastFrame)
+                {
+                    if (!positionTaken[matchList[i].indexPosition])
+                    {
+                        //matchList[i].marker.UpdatePosition(matchList[i].position, matchList[i].quality);
+                        matchList[i].marker.StoreFuturePositionUpdate(matchList[i].position, matchList[i].quality);
+                        matchList[i].marker.ApplyFuturePositionUpdate(); //do that after plausibility check!
+
+                        matchList[i].marker.assignedInLastFrame = true;
+                        positionTaken[matchList[i].indexPosition] = true;
+                    }
+                }
+            }
+        }
+
+        private void CheckPlausibility()
+        {
+            foreach (TrackedHand hand in hands)
+            {
+                if (!hand.calibrated)
+                {
+                    foreach (OptitrackMarker otm in hand.markers)
+                        otm.ApplyFuturePositionUpdate();
+                    continue;
+                }
+
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector3 OMP_0 = hand.jointPositionsLocal[i, 0];
+                    Vector3 OMP_1 = hand.markers[2 * i].GetCurrentPosition();
+                    Vector3 OMP_2 = hand.markers[2 * i+1].GetCurrentPosition();
+
+                    float l0 = Vector3.Distance(OMP_1, OMP_0) / hand.segmentLengths[i, 0];
+                    float l1 = Vector3.Distance(OMP_2, OMP_1) / (hand.segmentLengths[i, 1]+ hand.segmentLengths[i, 2]);
+
+
+                    //length check
+                    if(l0 > 1.5f || l0 <0.5f)
+                    {
+                        hand.markers[2 * i].assignedInLastFrame = false;
+                    }
+                    if (l1 > 1.5f || l0  < 0.5f)
+                    {
+                        hand.markers[2 * i+1].assignedInLastFrame = false;
+                    }
+
+                    if(hand.markers[2 * i].assignedInLastFrame)
+                    {
+                        if (hand.markers[2 * i + 1].assignedInLastFrame)
+                        {
+                            //both markers found -> do angle check!
+                            float angle = Vector3.Angle(OMP_1 - OMP_0, OMP_2 - OMP_1);
+                            if(false || angle>ANGLE_THRESHOLD)
+                            {
+                                hand.markers[2 * i].assignedInLastFrame = false;
+                                hand.markers[2 * i + 1].assignedInLastFrame = false;
+                            } 
+                            else
+                            {
+                                hand.markers[2 * i].ApplyFuturePositionUpdate();
+                                hand.markers[2 * i + 1].ApplyFuturePositionUpdate();
+                            }
+                        }
+                        else
+                        {
+                            //only proximal marker found
+                            hand.markers[2 * i].ApplyFuturePositionUpdate();
+                        }
+                    }
+                    else
+                    {
+                        if (hand.markers[2 * i + 1].assignedInLastFrame)
+                        {
+                            //only distal marker found
+                            hand.markers[2 * i + 1].ApplyFuturePositionUpdate();
+                        }
+                        else
+                        {
+                            //no markers found!
+                        }
+                    }
+                }
+            }
         }
 
         public class Match
@@ -211,8 +315,6 @@ namespace FingerTracking.MarkerManagement
 
         }
 
-
-        List<Vector3>[,] basePositionAnalysisPoints;
 
         public void PrepareForSphericalAnalysisMeta()
         {

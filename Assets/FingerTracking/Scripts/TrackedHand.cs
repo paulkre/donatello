@@ -6,6 +6,7 @@ namespace FingerTracking
     using HandModel;
     using MarkerManagement;
 
+    [System.Serializable]
     public class TrackedHand : MonoBehaviour
     {
         Color[] fingerColors = new Color[] { Color.red, Color.yellow, Color.green, Color.blue, Color.magenta };
@@ -16,8 +17,8 @@ namespace FingerTracking
 
         public Transform publicTransform;
 
-        public Matrix4x4 worldToLocalMatrix;
-        public Matrix4x4 localToWorldMatrix;
+        private Matrix4x4 worldToLocalMatrix;
+        private Matrix4x4 localToWorldMatrix;
 
         private Vector3 localVectorRight = Vector3.zero;
         private Vector3 localVectorUp = Vector3.zero;
@@ -27,15 +28,17 @@ namespace FingerTracking
 
         public bool calibrated = false;
 
-        private Vector3[] poseCalibrationFull = new Vector3[22];
+        private TrackedHandData handData;
 
-        private Vector3[] poseCalibrationDetection = new Vector3[10];
-        private Vector3[] poseCalibrationTight = new Vector3[10];
-        private Vector3[] poseCalibrationWide = new Vector3[10];
-        private Vector3[] poseCalibrationAngle = new Vector3[10];
+        public Vector3[] poseCalibrationFull = new Vector3[22];
+        public Vector3[] poseCalibrationDetection = new Vector3[10];
+        public Vector3[] poseCalibrationTight = new Vector3[10];
+        public Vector3[] poseCalibrationWide = new Vector3[10];
+        public Vector3[] poseCalibrationAngle = new Vector3[10];
+        public Vector3[] calibrationPoseDirect;
 
-        private Vector3[] calibrationPoseDirect;
 
+        public float calibrationPoseMSE = 1;
 
         const float RADtoNORM = 0.15915494309f;
 
@@ -47,7 +50,7 @@ namespace FingerTracking
 
         [SerializeField]
         public float[,] segmentLengths = new float[5, 3];
-        public Vector3[,] jointPositions = new Vector3[5, 4];
+        public Vector3[,] jointPositionsLocal = new Vector3[5, 4];
         private Vector3 carpus;
         private Vector3 trapezium;
 
@@ -65,6 +68,9 @@ namespace FingerTracking
         // Start is called before the first frame update
         void Start()
         {
+
+            handData = new TrackedHandData();
+
             publicTransform = transform;
 
             localMarkerPositionsFromHand = new List<Vector3>(512);
@@ -217,7 +223,7 @@ namespace FingerTracking
                 error += Vector3.Distance(lp0, lp1) * Vector3.Distance(lp0, lp1);
 
                 //calculate middle
-                jointPositions[i, 0] = (mp0 + mp1 + mp2) / 3f;
+                jointPositionsLocal[i, 0] = (mp0 + mp1 + mp2) / 3f;
 
             }
 
@@ -226,20 +232,19 @@ namespace FingerTracking
 
         public void SetMeta(Vector3 position, int fingerID, float radius) //step 1 / 2
         {
-            jointPositions[fingerID, 0] = position;
+            jointPositionsLocal[fingerID, 0] = position;
         }
 
         public void CalibrateLength() // step 2 / 2
         {
             for (int i = 0; i < 5; i++)
             {
-                segmentLengths[i, 0] = Vector3.Distance(markers[2 * i].GetCurrentPosition(), jointPositions[i, 0]);
+                segmentLengths[i, 0] = Vector3.Distance(markers[2 * i].GetCurrentPosition(), jointPositionsLocal[i, 0]);
                 segmentLengths[i, 1] = (2f / 3f) * (Vector3.Distance(markers[2 * i + 1].GetCurrentPosition(), markers[2 * i].GetCurrentPosition()) + 0.001f);
-                segmentLengths[i, 2] = 0.5f * segmentLengths[i, 1];
+                segmentLengths[i, 2] = 0.5f * segmentLengths[i, 1]; // = 1/3...
             }
         }
 
-        public float calibrationPoseMSE = 1;
         public void CalculateErrorToCalibrationPose()
         {
             UpdateMarkerPositions();
@@ -291,7 +296,7 @@ namespace FingerTracking
             return poseCalibrationFull;
         }
 
-        public void SetPose(int p)
+        public void SavePose(int p)
         {
             Vector3[] target;
             switch (p)
@@ -336,6 +341,18 @@ namespace FingerTracking
             }
         }
 
+        public void FinalizeCalibration()
+        {
+            foreach (GameObject g in handDummies)
+            {
+                g.SetActive(true);
+            }
+
+            calibrated = true;
+
+            GetComponent<HandModelInterface>().CalibrateHandModel();
+        }
+
         public void SetCalibrationPose()
         {
             for (int i = 0; i < 10; i++)
@@ -348,44 +365,36 @@ namespace FingerTracking
             localVectorForward = Vector3.Cross(localVectorRight, localVectorUp).normalized;
 
             // simulate carpus and thumb meta
-            carpus = jointPositions[4, 0] - localVectorForward * (segmentLengths[4, 0] + segmentLengths[4, 1] + segmentLengths[4, 2]);
-            jointPositions[0, 0] = jointPositions[1, 0] - localVectorForward * 0.95f * (segmentLengths[1, 0] + segmentLengths[1, 1] + segmentLengths[1, 2]);
+            carpus = jointPositionsLocal[4, 0] - localVectorForward * (segmentLengths[4, 0] + segmentLengths[4, 1] + segmentLengths[4, 2]);
+            jointPositionsLocal[0, 0] = jointPositionsLocal[1, 0] - localVectorForward * 0.95f * (segmentLengths[1, 0] + segmentLengths[1, 1] + segmentLengths[1, 2]);
 
             //set static offset
-            trapezium = jointPositions[0, 0] - localVectorUp * 0.00f;// - localVectorUp * 0.01f;
+            trapezium = jointPositionsLocal[0, 0] - localVectorUp * 0.00f;// - localVectorUp * 0.01f;
             carpus -= localVectorUp * 0.00f;
 
             for (int i = 1; i < 5; i++)
             {
-                jointPositions[i, 0] -= localVectorUp * 0.01f;
+                jointPositionsLocal[i, 0] -= localVectorUp * 0.01f;
             }
-            jointPositions[0, 0] -= localVectorUp * 0.01f;
+            jointPositionsLocal[0, 0] -= localVectorUp * 0.01f;
 
             if (side == Side.left)
             {
                 carpus += localVectorRight * 0.01f;
-                jointPositions[0, 0] -= localVectorRight * 0.02f;
+                jointPositionsLocal[0, 0] -= localVectorRight * 0.02f;
                 trapezium -= localVectorRight * 0.025f;
             }
             else
             {
                 carpus -= localVectorRight * 0.01f;
-                jointPositions[0, 0] += localVectorRight * 0.02f;
+                jointPositionsLocal[0, 0] += localVectorRight * 0.02f;
                 trapezium += localVectorRight * 0.025f;
             }
-
-
+            
 
             //activate
-            foreach (GameObject g in handDummies)
-            {
-                g.SetActive(true);
-            }
-
-            calibrated = true;
-            SetPose(0);
-
-            GetComponent<HandModelInterface>().CalibrateHandModel();
+            SavePose(0);
+            FinalizeCalibration();
         }
 
         public void DefineParents()
@@ -398,7 +407,7 @@ namespace FingerTracking
                 markers[2 * i].ClearParent();
 
                 markers[2 * i + 1].SetParent(markers[2 * i]);
-                markers[2 * i].SetParent(jointPositions[i, 0]);
+                markers[2 * i].SetParent(jointPositionsLocal[i, 0]);
             }
         }
 
@@ -437,7 +446,7 @@ namespace FingerTracking
             float f = 0, mse = 0, max = 0;
             for (int i = 1; i < 5; i++)
             {
-                f = Vector3.Distance(markers[2 * i].GetCurrentPosition(), jointPositions[i, 0]) - segmentLengths[i, 0];
+                f = Vector3.Distance(markers[2 * i].GetCurrentPosition(), jointPositionsLocal[i, 0]) - segmentLengths[i, 0];
                 mse += f * f;
 
                 if (f > max)
@@ -510,7 +519,7 @@ namespace FingerTracking
             //reference to metacarpal joint of index
 
             //print("JP:" + (jointPositions[0,1].y-markers[0].GetCurrentPosition().y));
-            thumbDistance = (jointPositions[1, 0].y - markers[0].GetCurrentPosition().y - 0.02f) / 0.01f;
+            thumbDistance = (jointPositionsLocal[1, 0].y - markers[0].GetCurrentPosition().y - 0.02f) / 0.01f;
             thumbDistance = Mathf.Clamp01(thumbDistance);
 
             Quaternion qThumbOffset = Quaternion.Euler(Vector3.Lerp(thumbOffsetAnglesMin, thumbOffsetAnglesMax, thumbDistance));
@@ -564,7 +573,7 @@ namespace FingerTracking
 
                 if (calibrationPoseMSE < 0.005f)
                 {
-                    FingerTrackingMaster.Instance.Calibrator.CalibrateHand(this);
+                    FingerTrackingMaster.Instance.Calibrator.MarkerAssignToHands(this);
                 }
             }
         }
@@ -589,82 +598,6 @@ namespace FingerTracking
 
         }
 
-        GameObject[] handDummies;
-        void ControlHandDummy()
-        {
-            int index;
-            for (int i = 0; i < 5; i++)
-            {
-                index = 7 * i;
-                SetJoint(index, i, 0);
-                SetPhalanx(index + 1, i, 0, i, 1);
-                SetJoint(index + 2, i, 1);
-
-                SetPhalanx(index + 3, i, 1, i, 2);//should simulate distal
-                SetJoint(index + 4, i, 2); //should simulate distal
-                SetPhalanx(index + 5, i, 2, i, 3);//should simulate distal
-                SetJoint(index + 6, i, 3);//should simulate distal
-            }
-
-            SetPhalanx(35, 1, 0, trapezium);
-            SetPhalanx(36, 1, 0, 2, 0);
-            SetPhalanx(37, 2, 0, 3, 0);
-            SetPhalanx(38, 3, 0, 4, 0);
-            SetPhalanx(39, 4, 0, trapezium);
-
-            SetPhalanx(40, trapezium, carpus);
-            SetPhalanx(41, 4, 0, carpus);
-            SetPhalanx(42, 1, 0, carpus);
-            SetJoint(43, carpus);
-            SetJoint(44, trapezium);
-        }
-
-        void SetJoint(int objIndex, int indexFinger, int indexJoint)
-        {
-            handDummies[objIndex].transform.position = GetWorldPosition(indexFinger, indexJoint);
-        }
-
-        void SetJoint(int objIndex, Vector3 localPosition)
-        {
-            handDummies[objIndex].transform.position = TransformLocalToWorldSpace(localPosition);
-        }
-
-        void SetPhalanx(int objIndex, int jointFromIndex, int jointToIndex)
-        {
-            handDummies[objIndex].transform.position = (handDummies[jointFromIndex].transform.position + handDummies[jointToIndex].transform.position) / 2f;
-            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(handDummies[jointFromIndex].transform.position, handDummies[jointToIndex].transform.position) / 2f, 0.01f);
-            handDummies[objIndex].transform.LookAt(handDummies[jointToIndex].transform.position);
-            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
-        }
-
-        void SetPhalanx(int objIndex, int indexFinger, int indexJoint, int targetIndexFinger, int targetIndexJoint)
-        {
-            handDummies[objIndex].transform.position = (GetWorldPosition(indexFinger, indexJoint) + GetWorldPosition(targetIndexFinger, targetIndexJoint)) / 2f;
-            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(GetWorldPosition(indexFinger, indexJoint), GetWorldPosition(targetIndexFinger, targetIndexJoint)) / 2f, 0.01f);
-            handDummies[objIndex].transform.LookAt(GetWorldPosition(targetIndexFinger, targetIndexJoint));
-            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
-        }
-
-        void SetPhalanx(int objIndex, Vector3 localFromPosition, Vector3 localToPosition)
-        {
-            Vector3 worldFromPosition = TransformLocalToWorldSpace(localFromPosition);
-            Vector3 worldToPosition = TransformLocalToWorldSpace(localToPosition);
-
-            handDummies[objIndex].transform.position = (worldFromPosition + worldToPosition) / 2f;
-            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(worldFromPosition, worldToPosition) / 2f, 0.01f);
-            handDummies[objIndex].transform.LookAt(worldToPosition);
-            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
-        }
-        void SetPhalanx(int objIndex, int indexFinger, int indexJoint, Vector3 localPosition)
-        {
-            Vector3 worldPosition = TransformLocalToWorldSpace(localPosition);
-
-            handDummies[objIndex].transform.position = (GetWorldPosition(indexFinger, indexJoint) + worldPosition) / 2f;
-            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(GetWorldPosition(indexFinger, indexJoint), worldPosition) / 2f, 0.01f);
-            handDummies[objIndex].transform.LookAt(worldPosition);
-            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
-        }
-
         Vector3 localPosition = Vector3.zero;
         Vector3 fwd, dwn;
         public Vector3 GetWorldPosition(int fingerIndex, int joint)
@@ -677,11 +610,11 @@ namespace FingerTracking
             switch (joint)
             {
                 case 0:
-                    localPosition = jointPositions[fingerIndex, 0];
+                    localPosition = jointPositionsLocal[fingerIndex, 0];
                     break;
                 case 1:
                     localPosition = markers[fingerIndex * 2].GetCurrentPosition();
-                    fwd = (localPosition - jointPositions[fingerIndex, 0]).normalized;
+                    fwd = (localPosition - jointPositionsLocal[fingerIndex, 0]).normalized;
                     if (fingerIndex == 0)
                     {
                         dwn = Vector3.Cross(GetThumbRightVector(), fwd).normalized;
@@ -781,37 +714,55 @@ namespace FingerTracking
         Vector3 v;
         public TrackedHandData GetData()
         {
-            TrackedHandData thd = new TrackedHandData();
+            //length
+            handData.segmentLengths = segmentLengths;
 
-            thd.segmentLengths = segmentLengths;
-            thd.segmentLengths = segmentLengths;
-            thd.side = (int)side;
+            //side
+            handData.side = (int)side;
 
+            //convert joint positions from Vector3 to float-array
             for (int fi = 0; fi < 5; fi++)
             {
                 for (int ji = 0; ji < 4; ji++)
                 {
                     v = poseCalibrationFull[4 * fi + ji];
-                    thd.positions[fi * 4 + ji, 0] = v.x;
-                    thd.positions[fi * 4 + ji, 1] = v.y;
-                    thd.positions[fi * 4 + ji, 2] = v.z;
+                    handData.jointPositions[fi * 4 + ji, 0] = v.x;
+                    handData.jointPositions[fi * 4 + ji, 1] = v.y;
+                    handData.jointPositions[fi * 4 + ji, 2] = v.z;
                 }
             }
 
-            thd.positions[20, 0] = carpus.x;
-            thd.positions[20, 1] = carpus.y;
-            thd.positions[20, 2] = carpus.z;
-            thd.positions[21, 0] = trapezium.x;
-            thd.positions[21, 1] = trapezium.y;
-            thd.positions[21, 2] = trapezium.z;
+            handData.jointPositions[20, 0] = carpus.x;
+            handData.jointPositions[20, 1] = carpus.y;
+            handData.jointPositions[20, 2] = carpus.z;
+            handData.jointPositions[21, 0] = trapezium.x;
+            handData.jointPositions[21, 1] = trapezium.y;
+            handData.jointPositions[21, 2] = trapezium.z;
 
-            return thd;
+
+            //convert calibration pose from V3 to f[]
+            for(int i = 0;i<10;i++)
+            {
+                handData.calibrationPositions[i, 0] = calibrationPoseDirect[i].x;
+                handData.calibrationPositions[i, 1] = calibrationPoseDirect[i].y;
+                handData.calibrationPositions[i, 2] = calibrationPoseDirect[i].z;
+            }
+
+            return handData;
         }
 
-        public void SetData(TrackedHandData thd)
+        public void SetData(TrackedHandData loadedHandData)
         {
             //lengths
-            segmentLengths = thd.segmentLengths;
+            segmentLengths = loadedHandData.segmentLengths;
+
+            //side
+            if (loadedHandData.side == 0)
+            {
+                side = Side.left;
+            }
+            else
+                side = Side.right;
 
             //jointPositions
             int index;
@@ -822,55 +773,39 @@ namespace FingerTracking
                     index = ji + fi * 4;
                     for (int c = 0; c < 3; c++)
                     {
-                        jointPositions[fi, ji][c] = thd.positions[index, c];
+                        jointPositionsLocal[fi, ji][c] = loadedHandData.jointPositions[index, c];
                     }
                 }
                 //transfer jointPosition to marker
-                markers[2 * fi].UpdatePosition(jointPositions[fi, 1], 1);
-                markers[2 * fi + 1].UpdatePosition(jointPositions[fi, 3], 1);
+                markers[2 * fi].UpdatePosition(jointPositionsLocal[fi, 1], 1);
+                markers[2 * fi + 1].UpdatePosition(jointPositionsLocal[fi, 3], 1);
             }
 
             //Debug.Log("carpus" + thd.positions[20, 0] + " " + thd.positions[20, 1] + " " + thd.positions[20, 2]);
 
             //simulated
-            carpus[0] = thd.positions[20, 0];
-            carpus[1] = thd.positions[20, 1];
-            carpus[2] = thd.positions[20, 2];
-            trapezium[0] = thd.positions[21, 0];
-            trapezium[1] = thd.positions[21, 1];
-            trapezium[2] = thd.positions[21, 2];
+            carpus[0] = loadedHandData.jointPositions[20, 0];
+            carpus[1] = loadedHandData.jointPositions[20, 1];
+            carpus[2] = loadedHandData.jointPositions[20, 2];
+            trapezium[0] = loadedHandData.jointPositions[21, 0];
+            trapezium[1] = loadedHandData.jointPositions[21, 1];
+            trapezium[2] = loadedHandData.jointPositions[21, 2];
 
 
-            //to localSpace
-            //carpus = TransformLocalToWorldSpace(carpus);
-            //trapezium = TransformLocalToWorldSpace(trapezium);
-
-            /*
-            for (int fi = 0; fi < 5; fi++)
+            calibrationPoseDirect = new Vector3[10];
+            //convert calibration pose from V3 to f[]
+            for (int i = 0; i < 10; i++)
             {
-                for (int ji = 0; ji < 4; ji++)
-                {
-                    index = ji + fi * 4;
-                    jointPositions[fi, ji] = TransformWorldToLocalSpace(jointPositions[fi, ji]);
-                }
-                //transfer jointPosition to marker
-                markers[2 * fi].UpdatePosition(jointPositions[fi, 1], 1);
-                markers[2 * fi + 1].UpdatePosition(jointPositions[fi, 3], 1);
+                calibrationPoseDirect[i] = new Vector3(calibrationPoseDirect[i].x, calibrationPoseDirect[i].y, calibrationPoseDirect[i].z);
             }
-            */
-            //CopyVector3Array()
 
-            if (thd.side == 0)
-            {
-                side = Side.left;
-            }
-            else
-                side = Side.right;
+            FinalizeCalibration();
 
-            SetPose(0);
+            SavePose(0);
             calibrated = true;
             GetComponent<HandModelInterface>().CalibrateHandModel();
 
+            /*
             void CopyVector3Array(Vector3[] source, ref Vector3[] destination)
             {
                 for (int i = 0; i < source.Length; i++)
@@ -878,6 +813,7 @@ namespace FingerTracking
                     destination[i] = new Vector3(source[i].x, source[i].y, source[i].z);
                 }
             }
+            */
         }
 
 
@@ -916,6 +852,79 @@ namespace FingerTracking
             r += "\n};";
 
             print(r);
+        }
+
+
+
+        GameObject[] handDummies;
+        void ControlHandDummy()
+        {
+            int index;
+            for (int i = 0; i < 5; i++)
+            {
+                index = 7 * i;
+                SetJoint(index, i, 0);
+                SetPhalanx(index + 1, i, 0, i, 1);
+                SetJoint(index + 2, i, 1);
+
+                SetPhalanx(index + 3, i, 1, i, 2);//should simulate distal
+                SetJoint(index + 4, i, 2); //should simulate distal
+                SetPhalanx(index + 5, i, 2, i, 3);//should simulate distal
+                SetJoint(index + 6, i, 3);//should simulate distal
+            }
+
+            SetPhalanx(35, 1, 0, trapezium);
+            SetPhalanx(36, 1, 0, 2, 0);
+            SetPhalanx(37, 2, 0, 3, 0);
+            SetPhalanx(38, 3, 0, 4, 0);
+            SetPhalanx(39, 4, 0, trapezium);
+
+            SetPhalanx(40, trapezium, carpus);
+            SetPhalanx(41, 4, 0, carpus);
+            SetPhalanx(42, 1, 0, carpus);
+            SetJoint(43, carpus);
+            SetJoint(44, trapezium);
+        }
+        void SetJoint(int objIndex, int indexFinger, int indexJoint)
+        {
+            handDummies[objIndex].transform.position = GetWorldPosition(indexFinger, indexJoint);
+        }
+        void SetJoint(int objIndex, Vector3 localPosition)
+        {
+            handDummies[objIndex].transform.position = TransformLocalToWorldSpace(localPosition);
+        }
+        void SetPhalanx(int objIndex, int jointFromIndex, int jointToIndex)
+        {
+            handDummies[objIndex].transform.position = (handDummies[jointFromIndex].transform.position + handDummies[jointToIndex].transform.position) / 2f;
+            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(handDummies[jointFromIndex].transform.position, handDummies[jointToIndex].transform.position) / 2f, 0.01f);
+            handDummies[objIndex].transform.LookAt(handDummies[jointToIndex].transform.position);
+            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
+        }
+        void SetPhalanx(int objIndex, int indexFinger, int indexJoint, int targetIndexFinger, int targetIndexJoint)
+        {
+            handDummies[objIndex].transform.position = (GetWorldPosition(indexFinger, indexJoint) + GetWorldPosition(targetIndexFinger, targetIndexJoint)) / 2f;
+            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(GetWorldPosition(indexFinger, indexJoint), GetWorldPosition(targetIndexFinger, targetIndexJoint)) / 2f, 0.01f);
+            handDummies[objIndex].transform.LookAt(GetWorldPosition(targetIndexFinger, targetIndexJoint));
+            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
+        }
+        void SetPhalanx(int objIndex, Vector3 localFromPosition, Vector3 localToPosition)
+        {
+            Vector3 worldFromPosition = TransformLocalToWorldSpace(localFromPosition);
+            Vector3 worldToPosition = TransformLocalToWorldSpace(localToPosition);
+
+            handDummies[objIndex].transform.position = (worldFromPosition + worldToPosition) / 2f;
+            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(worldFromPosition, worldToPosition) / 2f, 0.01f);
+            handDummies[objIndex].transform.LookAt(worldToPosition);
+            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
+        }
+        void SetPhalanx(int objIndex, int indexFinger, int indexJoint, Vector3 localPosition)
+        {
+            Vector3 worldPosition = TransformLocalToWorldSpace(localPosition);
+
+            handDummies[objIndex].transform.position = (GetWorldPosition(indexFinger, indexJoint) + worldPosition) / 2f;
+            handDummies[objIndex].transform.localScale = new Vector3(0.01f, Vector3.Distance(GetWorldPosition(indexFinger, indexJoint), worldPosition) / 2f, 0.01f);
+            handDummies[objIndex].transform.LookAt(worldPosition);
+            handDummies[objIndex].transform.Rotate(90, 0, 0, Space.Self);
         }
 
         void CreateCylinderDummyHand()

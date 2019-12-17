@@ -23,6 +23,8 @@ namespace FingerTracking.Debugging
 
         private List<int> optitrackIds;
 
+        int[] timings = new int[10];
+
         // Start is called before the first frame update
         public void Init()
         {
@@ -35,7 +37,6 @@ namespace FingerTracking.Debugging
 
         void Update()
         {
-
             if (drawLines) DrawLines();
 
             UI_hugeText.text = GenerateDebugString();
@@ -62,18 +63,22 @@ namespace FingerTracking.Debugging
             var currentAssigns = assigner.Assigns - lastAssigns;
             lastAssigns = assigner.Assigns;
 
-            string debugS = $"DFPS:" + Mathf.RoundToInt(1f / Time.deltaTime).ToString("D5") + "\n";
+            string debugS = $" FPS: " + Mathf.RoundToInt(1f / Time.deltaTime).ToString("D5") + "\n\n";
 
             debugS += string.Format(
-                "PULL:{0,-10:D5}\nSUCC:{1,-10:D5}\nASGN:{2,-10:D5}\n",
+                "PULL: {0,-10:D5}\nSUCC: {1,-10:D5}\nASGN: {2,-10:D5}\n",
                 0,
                 0,
                 currentAssigns
             );
 
-            int t0 = 0, t1 = 0;
-            assigner.GetAssignTimings(ref t0, ref t1);
-            debugS += "MAT0:" + string.Format("{0,-8:D5}", t0) + "\nMAT1:" + string.Format("{0,-8:D5}\n\n", t1);
+            debugS += "\n";
+
+            assigner.GetAssignTimings(ref timings);
+            for(int i = 0;i<3;i++)
+            {
+                debugS += "MAT"+i+": " + string.Format("{0,-8:F3}", (timings[i]/10000f)) + " ms\n";
+            }
 
             UI_timings.text = debugS;
 

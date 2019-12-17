@@ -6,12 +6,30 @@ namespace FingerTracking.MarkerManagement
     public class OptitrackMarker
     {
         private Vector3[] positions;
-
         private const int positionLookback = 10;
         private int currentPositionIndex = 0;
 
+        private Vector3 storedFuturePosition;
+        private float storedFutureQuality;
+
         public float assignQuality = 0;
         public bool assignedInLastFrame = false;
+        public float lastAssign = 0;
+
+        public Quaternion orientation;
+
+        private Vector3 predictPosition;
+        private Vector3 predictMovement;
+        private Vector3 predictAcceleration;
+
+
+        float predictionDecay = 0.9f;
+        float predictionLimit = 0.01f;
+
+        float rating;
+
+        OptitrackMarker parentMarker;
+        Vector3 parentPosition;
 
         public OptitrackMarker(Vector3 position)
         {
@@ -21,9 +39,6 @@ namespace FingerTracking.MarkerManagement
                 positions[i] = position;
             }
         }
-
-        OptitrackMarker parentMarker;
-        Vector3 parentPosition;
 
         public void ClearParent()
         {
@@ -40,13 +55,6 @@ namespace FingerTracking.MarkerManagement
             this.parentPosition = parentPosition;
         }
 
-
-        public Quaternion orientation;
-
-        private Vector3 predictPosition;
-        private Vector3 predictMovement;
-        private Vector3 predictAcceleration;
-        float rating;
 
         public float GetRatingForMatch(Vector3 testPosition)
         {
@@ -66,19 +74,16 @@ namespace FingerTracking.MarkerManagement
             }
         }
 
-        float decay = 0.9f;
-        float limit = 0.01f;
-
         public Vector3 GetPredictedPosition()
         {
             predictAcceleration =
                 (GetPosition(currentPositionIndex) - GetPosition(currentPositionIndex - 1)) -
                 (GetPosition(currentPositionIndex - 2) - GetPosition(currentPositionIndex - 3));
             predictMovement = (GetPosition(currentPositionIndex) - GetPosition(currentPositionIndex - 1));// + predictAcceleration);
-            predictMovement *= decay;
+            predictMovement *= predictionDecay;
 
-            if (predictMovement.magnitude > limit)
-                predictMovement = predictMovement.normalized * limit;
+            if (predictMovement.magnitude > predictionLimit)
+                predictMovement = predictMovement.normalized * predictionLimit;
 
 
             predictPosition = GetPosition(currentPositionIndex) + predictMovement;
@@ -126,6 +131,18 @@ namespace FingerTracking.MarkerManagement
                 return parentPosition;
             }
 
+        }
+
+        public void StoreFuturePositionUpdate(Vector3 newPosition, float quality)
+        {
+            storedFuturePosition = newPosition;
+            storedFutureQuality = quality;
+        }
+
+        public void ApplyFuturePositionUpdate()
+        {
+            UpdatePosition(storedFuturePosition, storedFutureQuality);
+            lastAssign = System.DateTime.Now.Ticks;
         }
 
         public void UpdatePosition(Vector3 newPosition, float quality)

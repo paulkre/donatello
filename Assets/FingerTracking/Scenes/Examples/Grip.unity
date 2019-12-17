@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.4366757, g: 0.48427194, b: 0.5645252, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -487,18 +487,51 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1111867881}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1677094013 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1791729800278405954, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1791729800778686271}
+--- !u!1 &1677094012
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1677094014}
+  - component: {fileID: 1677094013}
+  m_Layer: 0
+  m_Name: Grip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1677094013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677094012}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ada9b71177df5f459b42e12d8797ff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  threshold: 0.02
+  hand: {fileID: 2085853629}
+--- !u!4 &1677094014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677094012}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1733301201
 GameObject:
   m_ObjectHideFlags: 0
@@ -602,80 +635,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d52f715a1d98c3443bfacf218c9159f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &1791729800778686271
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1791729800278405955, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_Name
-      value: Grip
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405953, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1791729800278405954, guid: 65a73707f21c3e94f886d5ba9c3cd34b,
-        type: 3}
-      propertyPath: hand
-      value: 
-      objectReference: {fileID: 2085853629}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 65a73707f21c3e94f886d5ba9c3cd34b, type: 3}
 --- !u!1001 &3180104621202422626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -743,26 +702,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3180104620119745092, guid: a0474bed17c1f944e9975c3bac27fcda,
-        type: 3}
-      propertyPath: DrawMarkers
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3180104619794790512, guid: a0474bed17c1f944e9975c3bac27fcda,
-        type: 3}
-      propertyPath: handRootJoint
-      value: 
-      objectReference: {fileID: 1111867882}
-    - target: {fileID: 3180104619794790512, guid: a0474bed17c1f944e9975c3bac27fcda,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3180104620355418582, guid: a0474bed17c1f944e9975c3bac27fcda,
-        type: 3}
-      propertyPath: handRootJoint
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3180104620119745093, guid: a0474bed17c1f944e9975c3bac27fcda,
         type: 3}
       propertyPath: debugging_GUI
@@ -797,6 +736,26 @@ PrefabInstance:
         type: 3}
       propertyPath: plotterImage
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3180104620355418582, guid: a0474bed17c1f944e9975c3bac27fcda,
+        type: 3}
+      propertyPath: handRootJoint
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3180104619794790512, guid: a0474bed17c1f944e9975c3bac27fcda,
+        type: 3}
+      propertyPath: handRootJoint
+      value: 
+      objectReference: {fileID: 1111867882}
+    - target: {fileID: 3180104619794790512, guid: a0474bed17c1f944e9975c3bac27fcda,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3180104620119745092, guid: a0474bed17c1f944e9975c3bac27fcda,
+        type: 3}
+      propertyPath: DrawMarkers
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0474bed17c1f944e9975c3bac27fcda, type: 3}
