@@ -116,8 +116,10 @@ namespace VRSculpting.Sculptor.FingerTracking
             switch (fingerId)
             {
                 case 2:
-                    return ToolType.Move;
+                    return ToolType.Push;
                 case 3:
+                    return ToolType.Move;
+                case 4:
                     return ToolType.Smooth;
                 default:
                     return ToolType.Standard;
