@@ -9,8 +9,10 @@ namespace VRSculpting.Helpers
     public static class ObjExporter
     {
 
-        public static void Export(Mesh mesh, Transform transform, string filename = "out.obj")
+        public static void Export(Mesh mesh, Transform transform, string filename = null)
         {
+            if (filename == null)
+                filename = $"out_{System.DateTime.Now.ToString("yyMMdd-HHmmss")}.obj";
             string objString = MeshToString(mesh, transform);
             WriteToFile(objString, filename);
         }
